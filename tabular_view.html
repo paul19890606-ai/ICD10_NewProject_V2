@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>ICD-10-CM Tabular List 詳細檢視</title>
+    <style>
+        /* 樣式設計符合您提供的截圖需求 (清晰、結構化) */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background-color: #eef2f7; }
+        .container { max-width: 1200px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); }
+        
+        h1 { color: #1e3a8a; border-bottom: 4px solid #3b82f6; padding-bottom: 15px; margin-bottom: 30px; font-weight: 700; font-size: 1.8em; }
+        
+        /* 主分類區塊 (前三碼) */
+        .category { 
+            padding: 15px; 
+            border: 1px solid #d1d5db; 
+            border-left: 5px solid #1e3a8a; 
+            margin-bottom: 25px; 
+            background-color: #f9fafb; 
+            border-radius: 8px;
+        }
+        .category-code { font-size: 2em; font-weight: bold; color: #1e3a8a; margin-right: 15px; display: inline-block; vertical-align: middle; }
+        .category-term { font-size: 1.5em; font-weight: 600; color: #333; display: inline-block; vertical-align: middle; }
+
+        /* --- 附註區塊樣式 (通用，不含代碼欄位) --- */
+        .note-section {
+            margin-top: 10px; 
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        .note-section h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        .note-item {
+            margin-left: 15px;
+            list-style-type: disc;
+            color: #4b5563;
+        }
+        .includes { background-color: #e6f7ff; border: 1px solid #91d5ff; }
+        .includes h3 { color: #005691; border-bottom: 1px dashed #91d5ff; }
+        .excludes1 { background-color: #fff1f0; border: 1px solid #ffccc7; }
+        .excludes1 h3 { color: #a8071a; border-bottom: 1px dashed #ffccc7; }
+        .excludes2 { background-color: #f6ffed; border: 1px solid #d9f7be; }
+        .excludes2 h3 { color: #237804; border-bottom: 1px dashed #d9f7be; }
+        .instructions { background-color: #f0f5ff; border: 1px solid #adc6ff; }
+        .instructions h3 { color: #063897; border-bottom: 1px dashed #adc6ff; }
+        .seven-char { background-color: #fffae6; border: 1px solid #ffe58f; }
+        .seven-char h3 { color: #8a6500; border-bottom: 1px dashed #ffe58f; }
+
+        /* *** 關鍵修正: 讓 Category 級別的附註框 (Excludes1/2) 完美對齊 L24 框，不超出右側 *** */
+        .category + .note-section,
+        .category + .note-section + .note-section,
+        .category ~ .note-section {
+            /* 讓整個區塊向左移動 5px，抵消 Category 框的左邊線（5px），使其左邊線對齊 L24 的藍邊 */
+            margin-left: -5px;
+            
+            /* 設置與 Category 框相同的左邊線寬度 */
+            border-left: 5px solid transparent;
+            
+            /* 寬度設為 100%，它將與 Category 框的內容區域寬度相同，不會超出右側 */
+            width: 100%;
+            
+            /* 調整內部填充: 
+               - 左側：20px (Category框原有的 15px padding + 5px 左邊線)
+               - 右側：15px (Category框原有的 15px padding)
+            */
+            padding-left: 20px; 
+            padding-right: 15px; 
+            
+            /* 確保附註框頂部沒有圓角，更貼合 L24 框底部 */
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        /* 讓附註區塊左邊界顏色與它自己的 border 顏色保持一致 */
+        .category ~ .excludes1 { border-left-color: #ffccc7; }
+        .category ~ .excludes2 { border-left-color: #d9f7be; }
+        .category ~ .includes { border-left-color: #91d5ff; }
+
+        /* ------------------------------ */
+
+        /* 子代碼區塊 (Sub-Codes) */
+        .sub-codes-list { 
+            margin-top: 30px; 
+            padding-top: 20px; 
+            border-top: 2px dashed #ccc; 
+            padding-left: 0; 
+        }
+        .sub-codes-list h2 { 
+            color: #555; 
+            font-size: 1.4em; 
+            margin-bottom: 15px; 
+        }
+        
+        /* 子代碼項目的容器 (Grid 佈局) */
+        .sub-code-item {
+            display: grid;
+            grid-template-columns: 80px 1fr; 
+            grid-template-areas: 
+                "code content"
+                ". notes";
+            
+            align-items: flex-start;
+            padding-bottom: 8px;
+            padding-top: 8px;
+            border-bottom: 1px dotted #e0e0e0;
+            transition: background-color 0.1s;
+        }
+        .sub-code-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* 1. 代碼欄 (Code Column) */
+        .sub-code-item .code-column {
+            grid-area: code;
+            font-weight: bold;
+            color: #d9534f;
+            /* 靠左對齊 */
+            text-align: left; 
+            padding-right: 5px; 
+            padding-left: 0; 
+            padding-top: 2px;
+        }
+        
+        /* 2. 內容欄 (Term Column) */
+        .sub-code-item .term-content {
+            grid-area: content;
+            flex-grow: 1;
+            padding-left: 5px; 
+            color: #333;
+        }
+
+        /* 3. 附註欄 (Notes Column) */
+        .sub-code-item .sub-code-notes-container {
+            grid-area: notes; 
+            padding-left: 5px; 
+            padding-top: 5px;
+        }
+
+
+        /* ** 階層式縮排樣式 (左對齊後的計算) ** */
+        /* 基礎增量：90px */
+        .sub-code-level-4 { padding-left: 0; } 
+        .sub-code-level-5 { padding-left: 90px; } 
+        .sub-code-level-6 { padding-left: calc(90px * 2); } 
+        .sub-code-level-7 { padding-left: calc(90px * 3); } 
+        
+        /* ** 不完整碼標記樣式 ** */
+        .non-billable-code {
+            font-size: 0.8em;
+            font-weight: bold;
+            color: #3b82f6; 
+            margin-left: 5px;
+        }
+
+        /* 子代碼附註內的 note-section 調整 */
+        .sub-code-notes-container .note-section {
+            /* 負邊距以對齊 term-content 的左邊界 */
+            margin-left: -5px; 
+            width: calc(100% + 5px); 
+            
+            margin-top: 8px;
+            padding: 6px 10px;
+        }
+        
+        .sub-code-notes-container .includes { background-color: #f0faff; border: 1px solid #b3e0ff; }
+        .sub-code-notes-container .excludes1 { background-color: #fff6f5; border: 1px solid #ffdeda; }
+        .sub-code-notes-container .excludes2 { background-color: #fafff5; border: 1px solid #e7f5d9; }
+        .sub-code-notes-container .instructions { background-color: #f5faff; border: 1px solid #c8d9ff; }
+        .sub-code-notes-container .seven-char { background-color: #fffef2; border: 1px solid #ffeeaf; }
+
+        .not-found { color: #d9534f; font-weight: bold; padding: 20px; background-color: #ffe0e0; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="page-title">ICD-10-CM Tabular List 詳細檢視</h1>
+        <div id="details-container">
+            </div>
+    </div>
+
+    <script>
+        let tabularData = {};
+
+        // --- 輔助函數：解析並渲染附註 ---
+        function renderNotes(category) {
+            let notesHtml = '';
+            const noteTypes = [
+                { key: 'includes', title: 'Includes (包含)', class: 'includes' },
+                { key: 'excludes1', title: 'Excludes1 (排除1)', class: 'excludes1' },
+                { key: 'excludes2', title: 'Excludes2 (排除2)', class: 'excludes2' },
+                { key: 'codeFirst', title: 'Code First (優先編碼)', class: 'instructions' },
+                { key: 'useAdditionalCode', title: 'Use Additional Code (使用附加代碼)', class: 'instructions' },
+                { key: 'codeAlso', title: 'Code Also (同時編碼)', class: 'instructions' },
+                { key: 'notes', title: 'Instructional Notes (編碼說明)', class: 'instructions' },
+                { key: 'sevenChrNote', title: '7th Character Note (第七碼說明)', class: 'seven-char' },
+            ];
+
+            noteTypes.forEach(type => {
+                const notes = category[type.key];
+                if (notes && notes.length > 0) {
+                    const notesArray = Array.isArray(notes) ? notes : [notes];
+
+                    let listHtml = '<ul>';
+                    notesArray.forEach(note => {
+                        const noteText = typeof note === 'object' && note.note ? note.note : note;
+                        listHtml += `<li class="note-item">${noteText}</li>`;
+                    });
+                    listHtml += '</ul>';
+
+                    notesHtml += `
+                        <div class="note-section ${type.class}">
+                            <h3>${type.title}</h3>
+                            ${listHtml}
+                        </div>
+                    `;
+                }
+            });
+
+            return notesHtml;
+        }
+
+        // --- 輔助函數：渲染單個子代碼項目及其自身的附註 ---
+        function renderSubCodeItem(sub) {
+            const subCodeNotesHtml = renderNotes(sub);
+            
+            let subNotesArea = '';
+            if (subCodeNotesHtml) {
+                subNotesArea = `
+                    <div class="sub-code-notes-container">
+                        ${subCodeNotesHtml}
+                    </div>
+                `;
+            }
+
+            // 計算階層並加入 CSS Class
+            const codeLength = sub.code.length;
+            const levelClass = `sub-code-level-${codeLength}`;
+
+            // 檢查是否為不完整碼 (是否還有更長的子代碼)
+            let nonBillableNote = '';
+            let hasLongerSubcode = false;
+            for (const code in tabularData) {
+                if (code.startsWith(sub.code) && code.length > sub.code.length) {
+                    hasLongerSubcode = true;
+                    break;
+                }
+            }
+            
+            if (hasLongerSubcode) {
+                nonBillableNote = '<span class="non-billable-code"> (Not Billable)</span>';
+            }
+
+            return `
+                <div class="sub-code-item ${levelClass}">
+                    <div class="code-column">
+                        ${sub.code}
+                    </div>
+                    <div class="term-content">
+                        ${sub.term}${nonBillableNote}
+                    </div>
+                    ${subNotesArea}
+                </div>
+            `;
+        }
+
+
+        // --- 主顯示函數：解析並呈現 Tabular List 細節 ---
+        function displayCategoryDetails(prefixCode) {
+            const container = document.getElementById('details-container');
+            let htmlOutput = '';
+
+            // 1. 檢查主分類 (Category) 資訊
+            const category = tabularData[prefixCode];
+            
+            if (category) {
+                
+                // 1.1 呈現主分類代碼和描述
+                htmlOutput += `
+                    <div class="category">
+                        <span class="category-code">${category.code}</span>
+                        <span class="category-term">${category.term}</span>
+                    </div>
+                `;
+
+                // 1.2 呈現主分類的所有附註 (Category 級別)
+                htmlOutput += renderNotes(category);
+
+                // 2. 獲取所有子細目代碼 (Sub-Codes)
+                const subCategories = [];
+                for (const code in tabularData) {
+                    if (code.startsWith(prefixCode) && code.length > prefixCode.length) {
+                        subCategories.push(tabularData[code]);
+                    }
+                }
+                
+                subCategories.sort((a, b) => a.code.localeCompare(b.code));
+
+                // 2.1 呈現所有子代碼
+                if (subCategories.length > 0) {
+                    htmlOutput += `<div class="sub-codes-list">`;
+                    htmlOutput += `<h2>代碼細目 (Sub-Codes)</h2>`;
+                    
+                    subCategories.forEach(sub => {
+                        htmlOutput += renderSubCodeItem(sub);
+                    });
+                    
+                    htmlOutput += `</div>`;
+                } else {
+                    htmlOutput += `<p class="not-found" style="color: #4b5563;">此分類 (**${prefixCode}**) 下沒有更細的子細目代碼。</p>`;
+                }
+
+            } else {
+                htmlOutput = `<p class="not-found">在 Tabular List 數據中，未找到代碼 **${prefixCode}** 的分類資訊。請確認代碼是否為有效的 ICD-10-CM 三碼 Category。</p>`;
+            }
+
+            container.innerHTML = htmlOutput;
+        }
+
+        // --- 數據載入和初始化 ---
+        function loadTabularData() {
+            return fetch('data_tabular_index.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    tabularData = data;
+                })
+                .catch(error => {
+                    document.getElementById('details-container').innerHTML = `<p class="not-found">錯誤: 無法載入 Tabular List 數據檔案 (data_tabular_index.json)。請確認檔案路徑是否正確。${error.message}</p>`;
+                    console.error("Error loading JSON:", error);
+                });
+        }
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const codeParam = urlParams.get('code');
+            
+            const prefixCode = codeParam ? codeParam.substring(0, 3).toUpperCase() : null; 
+
+            if (prefixCode) {
+                document.title = `${prefixCode} - ICD-10-CM Tabular List 詳細檢視`;
+                document.getElementById('page-title').textContent = `${prefixCode} - ICD-10-CM Tabular List 詳細檢視`;
+                
+                loadTabularData().then(() => {
+                    displayCategoryDetails(prefixCode);
+                });
+            } else {
+                document.getElementById('details-container').innerHTML = '<p class="not-found">請提供有效的 ICD-10-CM 三碼代碼以查詢 Tabular List 資訊。</p>';
+            }
+        };
+    </script>
+
+</body>
+</html>

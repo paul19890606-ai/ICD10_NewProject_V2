@@ -2,176 +2,154 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>ICD-10-CM/PCS 模糊搜索 (V4 - 條列式樣式 + 強化類型標示)</title>
+    <title>ICD-10-CM/PCS 數據模糊搜索 (V14 - Neoplasm 代碼置中對齊)</title>
     <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
         
-        /* 載入動畫 */
+        /* ... (保持載入動畫和標題、狀態列 CSS 不變) ... */
         .loading-dot { display: inline-block; width: 8px; height: 8px; background-color: orange; border-radius: 50%; margin-left: 5px; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 
-        /* --- 標題和狀態列的容器 --- */
-        #title-container {
-            display: flex; 
-            align-items: flex-end; 
-            margin-bottom: 15px;
-        }
-
-        #title-container h2 {
-            margin: 0;
-            padding-right: 20px; 
-        }
-
-        #status-bar-info {
-            font-size: 0.75em; 
-            color: #555;
-            padding: 5px 10px;
-            border-left: 3px solid #ccc;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-            flex-grow: 1; 
-            white-space: nowrap; 
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        #status-line {
-            display: inline; 
-        }
+        #title-container { display: flex; align-items: flex-end; margin-bottom: 15px; }
+        #title-container h2 { margin: 0; padding-right: 20px; }
+        #status-bar-info { font-size: 0.75em; color: #555; padding: 5px 10px; border-left: 3px solid #ccc; background-color: #f9f9f9; border-radius: 4px; flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #status-line { display: inline; }
         
         /* --- 篩選器容器樣式 --- */
-        #filter-container {
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #f7f7f7;
-            border: 1px solid #eee;
-            border-radius: 5px;
-            font-size: 1.0em;
-        }
-        #filter-container label {
-            margin-right: 20px;
-            font-weight: 600;
-            color: #333;
-            display: inline-flex;
-            align-items: center;
-        }
-        #filter-container input[type="radio"] { 
-            margin-right: 5px;
-            transform: scale(1.1);
-        }
+        #filter-container { margin-bottom: 15px; padding: 10px; background-color: #f7f7f7; border: 1px solid #eee; border-radius: 5px; font-size: 1.0em; }
+        #filter-container label { margin-right: 20px; font-weight: 600; color: #333; display: inline-flex; align-items: center; }
+        #filter-container input[type="radio"] { margin-right: 5px; transform: scale(1.1); }
 
-        /* ***** 核心變動：搜索列容器 (使用 Flexbox) ***** */
-        #search-bar-container {
-            display: flex;
-            align-items: center; 
-            justify-content: space-between; /* 將左右元素推開 */
-            margin-bottom: 25px;
-            margin-top: 10px;
-        }
+        /* ***** 搜索列容器 (Flexbox) ***** */
+        #search-bar-container { margin-bottom: 25px; margin-top: 10px; }
+        #search-controls-row { display: flex; align-items: center; justify-content: flex-start; gap: 10px; }
+        #search-input { padding: 10px; width: 300px; min-width: 200px; font-size: 16px; border: 1px solid #ccc; flex-shrink: 1; }
         
-        /* 搜索控制項 (輸入框 + 按鈕) */
-        #search-controls {
-            display: flex;
-            align-items: center; 
-            /* 移除原有的 margin-bottom */
-        }
+        #nav-buttons-group { display: flex; align-items: center; flex-shrink: 0; }
+        .nav-button { padding: 10px 15px; font-size: 16px; font-weight: bold; cursor: pointer; margin-left: 5px; border: none; border-radius: 5px; transition: background-color 0.3s, transform 0.1s; height: 40px; line-height: 20px; flex-shrink: 0; }
+        #nav-buttons-group .nav-button:first-child { margin-left: 0; }
+        #pcs-button { background-color: #008080; color: white; }
+        #cm-button { background-color: #0056b3; color: white; }
+        .nav-button:hover { transform: translateY(-1px); }
         
-        #search-input { 
-            padding: 10px; 
-            width: 450px; 
-            font-size: 16px; 
-            border: 1px solid #ccc; 
-            flex-shrink: 0; 
-        }
+        #result-count-info { font-size: 0.9em; color: #333; font-weight: bold; white-space: nowrap; margin-left: auto; flex-shrink: 0; text-align: right; }
         
-        /* 按鈕樣式調整 */
-        .nav-button {
-            padding: 10px 15px; 
-            font-size: 16px; 
-            font-weight: bold;
-            cursor: pointer;
-            margin-left: 10px; 
-            border: none;
-            border-radius: 5px; 
-            transition: background-color 0.3s, transform 0.1s;
-            height: 40px; 
-            line-height: 20px; 
-        }
-        .nav-button:hover {
-            transform: translateY(-1px);
-        }
-        #pcs-button {
-            background-color: #008080; 
-            color: white;
-        }
-        #cm-button {
-            background-color: #0056b3; 
-            color: white;
-        }
+        #special-buttons-row { display: flex; align-items: center; gap: 5px; }
+        .special-result-button { padding: 8px 15px; font-size: 15px; font-weight: bold; cursor: pointer; border-radius: 5px; border: 2px solid; background-color: #f7f7f7; transition: all 0.2s; flex-shrink: 0; line-height: 1.2; text-align: center; height: 40px; color: white; }
+        .special-result-button:hover { background-color: #fff; transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: #333; }
+        .button-count { font-weight: 900; margin-left: 5px; }
         
-        /* ***** 核心變動：結果數量顯示 ***** */
-        #result-count-info {
-            font-size: 0.9em;
-            color: #333;
-            font-weight: bold;
-            white-space: nowrap; /* 防止文字換行 */
-            margin-left: 20px;
-            flex-shrink: 0;
-            text-align: right;
-        }
-
-        /* 統一的代碼顯示樣式 */
-        .search-result-code { 
-            font-weight: bold; 
-            color: #0056b3; 
-            margin-right: 10px; 
-            display: inline-block;
-        } 
-        
-        /* 其他通用樣式 */
+        .search-result-code { font-weight: bold; color: #0056b3; margin-right: 10px; display: inline-block; } 
         .is-clickable { cursor: pointer !important; text-decoration: underline !important; }
         .see-link { cursor: pointer; color: #d9534f; text-decoration: underline; margin-left: 5px; font-weight: bold; }
         .source { font-size: 0.8em; color: #666; margin-left: 10px; }
         
+        
         /* ================================================= */
-        /* --- 特殊列表的樣式 (舊條列式) --- */
+        /* --- 特殊列表的表格化樣式 (Neoplasm Table 樣式) --- */
         /* ================================================= */
         
-        /* 1. 特殊列表 (Neoplasm, E-Index, Drug) 的容器 */
+        /* 容器僅用於邊界和左側顏色條 */
         .special-table-result {
-            margin-bottom: 8px;
-            border-radius: 5px;
+            margin-bottom: 0; 
+            border-radius: 0; 
             overflow: hidden;
+            border-right: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            background-color: #fff; /* 確保背景是白色，以便交替行工作 */
         }
+        
+        /* 表格本身 */
         .special-table-result table {
             width: 100%;
             border-collapse: collapse;
         }
-        .special-table-result td {
-            padding: 10px 12px;
-            vertical-align: top;
-            font-size: 1.0em;
-        }
-        .special-table-code-col {
-            width: 120px; 
+        
+        /* 表格標頭 */
+        .neoplasm-table-header th {
+            text-align: center;
+            padding: 8px 5px;
+            font-size: 0.9em;
+            background-color: #e6e6fa; /* Neoplasm 標頭的柔和紫色背景 */
+            border: 1px solid #ccc;
+            white-space: nowrap;
             font-weight: bold;
-            flex-shrink: 0;
-            border-right: 1px dashed #ccc;
-        }
-        /* 腫瘤/外傷/外因 - 紫色調 */
-        .neoplasm-row, .eindex-row {
-            background-color: #f7e6f7; /* 淺紫色 */
-            border: 1px solid #e0cce0;
-            border-left: 5px solid #9932cc; /* 左邊的紫色線 */
-        }
-        /* 中毒/藥物 - 橘色調 */
-        .drug-row {
-            background-color: #fff0e6; 
-            border: 1px solid #ffe0cc;
-            border-left: 5px solid #ff7b00; 
         }
 
+        /* 表格單元格 */
+        .special-table-result td {
+            padding: 6px 8px; 
+            vertical-align: middle;
+            font-size: 1.0em;
+            border-right: 1px solid #eee; 
+            border-bottom: none; 
+            text-align: center; 
+        }
+        
+        /* 索引詞欄位 (最左邊的欄位) */
+        .neoplasm-term-col {
+            width: 30%; 
+            text-align: left !important; /* 左對齊 */
+            font-weight: 500;
+            /* background-color: #fff;  <-- V13 修正：移除固定白色，允許繼承交替行顏色 */
+            border-right: 2px solid #aaa !important; /* 加強索引詞和代碼列的分隔 */
+        }
+        
+        /* 代碼欄位 (右側的六個分類欄位) */
+        .neoplasm-code-col {
+            width: 10%; 
+            white-space: nowrap;
+            font-size: 0.9em;
+            text-align: center !important; /* *** V14 修正：代碼置中對齊 *** */
+            border-right: 1px dotted #ccc; 
+        }
+        .neoplasm-code-col:last-child {
+            border-right: none; /* 移除最右邊的點線分隔 */
+        }
+        
+        /* ----------------------------------------------- */
+        /* ******** 優化：交替行顏色 (Zebra Stripes) ******** */
+        /* ----------------------------------------------- */
+        
+        /* 預設行樣式，用於 Neoplasm */
+        .neoplasm-row {
+            border-left: 5px solid #9932cc; /* 左側邊界顏色 */
+            background-color: #fff; 
+        }
+        /* 偶數行 (從 tbody 第二行開始計算) 設置不同的背景色 */
+        .neoplasm-row:nth-child(even) {
+            background-color: #f0f0f8; /* 柔和的淺紫色 */
+        }
+        
+        /* 應用到整個容器，設置左邊界顏色和背景色 - Drug */
+        .drug-row {
+            border-left: 5px solid #ff7b00;
+            background-color: #fff;
+        }
+        .drug-row:nth-child(even) {
+            background-color: #fff0e6; /* 柔和的淺橘色 */
+        }
+
+        /* 應用到整個容器，設置左邊界顏色和背景色 - E-Index */
+        /* E-Index 使用簡潔列表，這裡保留左邊界色 */
+/* 列表項目排版 (General & E-Index Rows) */
+    .eindex-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        padding: 8px 10px;
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+    .eindex-row:hover {
+        background-color: #f5f5f5;
+    }
+        /* ----------------------------------------------- */
+        
+        
         /* 3. 一般索引結果 (維持白色) */
         .result-item { 
             border: 1px solid #eee; 
@@ -179,21 +157,48 @@
             margin-bottom: 5px; 
             background-color: #fff; 
         }
-        
-        /* ***** 強化腫瘤類型標籤樣式 ***** */
-        .neoplasm-type-tag {
-            font-weight: 900; /* 極粗體 */
-            font-size: 1.05em; /* 稍微大一點 */
-            padding: 2px 6px;
-            border-radius: 3px;
-            margin-left: 10px;
-            white-space: nowrap; /* 不換行 */
-            display: inline-block;
-        }
-        /* --- 特殊列表樣式結束 --- */
 
-        /* 隱藏 V26 的 PCS 區塊樣式 */
-        #pcs-search-container, #pcs-results { display: none; }
+/* === 核心修改：強制固定代碼欄位寬度並右對齊 === */
+    .eindex-code-area {
+        /* 設置為固定寬度 (足夠容納 7 碼代碼 + 點 + 邊距) */
+        width: 140px !important; /* 增加寬度以確保容納 7 碼 */
+        min-width: 140px !important; 
+        flex-shrink: 0 !important;
+        padding-right: 15px;
+        border-right: 3px solid #ccc; /* 用來分隔的垂直線，顏色在 JS 中動態設定 */
+        text-align: right !important; /* 強制代碼右對齊 */
+    }
+    .search-result-code {
+        font-weight: bold;
+        font-size: 1.1em;
+        /* 確保代碼本身不換行 */
+        white-space: nowrap;
+        /* 將代碼移動到右側，並為 <a> 標籤定義懸停樣式 */
+        display: inline-block;
+        /* 確保最小寬度，即便代碼是 '-' */
+        min-width: 80px; 
+    }
+    .search-result-code.is-clickable {
+        text-decoration: none;
+        border-bottom: 1px dotted; /* 讓連結看起來更明顯 */
+    }
+    .search-result-code.is-clickable:hover {
+        border-bottom-style: solid;
+        color: #d32f2f !important;
+    }
+    /* =================================== */
+
+    /* 內容欄位 */
+    .eindex-content-area {
+        /* 讓內容欄位佔滿剩餘空間 */
+        flex-grow: 1; 
+        padding-left: 15px;
+        font-size: 0.95em;
+        color: #333;
+        line-height: 1.4;
+    }
+    /* ... (其餘 CSS 樣式保持不變) ... */
+
     </style>
 </head>
 <body>
@@ -229,14 +234,21 @@
 
 
         <div id="search-bar-container">
-            <div id="search-controls">
+            
+            <div id="search-controls-row">
+                
                 <input type="text" id="search-input" placeholder="輸入 CM 或 PCS 關鍵字 (例如：肺炎, 腎臟)" autofocus>
                 
-                <button id="cm-button" class="nav-button" onclick="alert('目前 CM/PCS 整合搜索已涵蓋 CM 索引。');">CM 詳盡搜索</button>
-                <button id="pcs-button" class="nav-button" onclick="window.location.href='search_pcs.html'">PCS 專門搜索</button>
+                <div id="nav-buttons-group">
+                    <button id="cm-button" class="nav-button" onclick="alert('目前 CM/PCS 整合搜索已涵蓋 CM 索引。');">CM 詳盡搜索</button>
+                    <button id="pcs-button" class="nav-button" onclick="window.location.href='search_pcs.html'">PCS 專門搜索</button>
+                </div>
+                
+                <div id="special-buttons-row">
+                    </div>
+                
+                <span id="result-count-info"></span> 
             </div>
-            
-            <span id="result-count-info"></span> 
         </div>
         
         <div id="results">
@@ -252,9 +264,23 @@
         let isDataLoaded = false;
         const resultsDiv = document.getElementById('results');
         const searchInput = document.getElementById('search-input');
-        const resultCountInfo = document.getElementById('result-count-info'); // 獲取新的元素
+        const resultCountInfo = document.getElementById('result-count-info'); 
         let fuse; 
         
+        let currentSpecialResults = []; 
+        
+        // Neoplasm 和 Drug 表格的代碼欄位映射 (英文標頭)
+        const NEOPLASM_COLUMNS_MAP = {
+            'MalignantPrimary': 'Malignant Primary', 
+            'MalignantSecondary': 'Malignant Secondary', 
+            'CaInSitu': 'Ca in situ', 
+            'Benign': 'Benign', 
+            'UncertainBehavior': 'Uncertain Behavior', 
+            'UnspecifiedBehavior': 'Unspecified Behavior'
+        };
+        const DRUG_COLUMNS = ['PoisoningAccident', 'PoisoningIntentionalSelfHarm', 'PoisoningAssault', 'PoisoningUndetermined', 'AdverseEffect', 'Underdosing'];
+
+
         // --- 輔助函數 ---
         function debounce(func, delay) {
             let timeoutId;
@@ -265,11 +291,10 @@
                 }, delay);
             };
         }
-
+        
         async function loadJson(fileName, statusElementId, source) {
             const statusElement = document.getElementById(statusElementId);
             try {
-                // 修正：為了繞過快取，加入時間戳
                 const cacheBuster = `?t=${new Date().getTime()}`;
                 const response = await fetch(fileName + cacheBuster);
                 if (!response.ok) {
@@ -291,11 +316,13 @@
             if (!data) return [];
             return data.map(item => ({
                 code: item.code || item.c, 
-                description: item.description || item.t,
+                description: item.description || item.t, 
                 source: item.source || 'CM Index', 
                 see: item.see || null,       
                 seeAlso: item.seeAlso || null, 
-                use: item.use || null        
+                use: item.use || null,
+                // 傳遞 specialCodes，用於 Neoplasm/Drug 表格渲染
+                specialCodes: item.specialCodes || null 
             }));
         }
 
@@ -306,13 +333,13 @@
             
             for (const categoryCode in data) {
                 const categoryEntry = data[categoryCode];
-                list.push({ code: categoryCode, description: categoryEntry.d, source: 'Tabular Category' });
+                list.push({ code: categoryCode, description: categoryEntry.term || categoryEntry.d, source: 'Tabular Category' }); 
                 const subEntries = categoryEntry.subs || categoryEntry.ch; 
                 
                 if (subEntries) {
                     for (const subCode in subEntries) {
                         const subEntry = subEntries[subCode];
-                        list.push({ code: subCode, description: subEntry.d, source: 'Tabular Sub-Code' });
+                        list.push({ code: subCode, description: subEntry.term || subEntry.d, source: 'Tabular Sub-Code' });
                     }
                 }
             }
@@ -321,46 +348,20 @@
 
         function getActiveFilters() {
             const filters = [];
-            
             const isSpecialChecked = document.getElementById('filter-special').checked;
-            
             if (isSpecialChecked) {
-                filters.push('Special'); // 包含 Neoplasm, Drug, E-Index
+                filters.push('Special'); 
             } else { 
-                filters.push('General'); // 包含 CM Index, Tabular, PCS Index
+                filters.push('General'); 
             }
-            
             return filters;
         }
-
-        function filterIndexData(activeFilters) {
-            const SPECIAL_SOURCES = ['Neoplasm', 'Drug', 'E-Index'];
-
-            return fullIndex.filter(item => {
-                
-                const isSpecial = SPECIAL_SOURCES.includes(item.source);
-
-                // 1. 檢查是否在特殊列表模式下
-                if (activeFilters.includes('Special')) { 
-                    if (isSpecial) return true;
-                }
-                
-                // 2. 檢查是否在一般索引模式下
-                if (activeFilters.includes('General')) {
-                     // 排除特殊列表的來源
-                     if (!isSpecial) {
-                        return true;
-                    }
-                }
-
-                return false;
-            });
-        }
         
-        // --- 點擊跳轉/搜索函數 ---
         function navigateToDetail(code) {
             const categoryCode = code.substring(0, 3); 
-            window.location.href = `detail.html?code=${categoryCode}`;
+            // 這裡可以導航到詳細頁面，或只是彈出提示
+            alert(`導航到代碼 ${categoryCode} 的 Tabular 詳細頁面。`);
+            // window.location.href = `detail.html?code=${categoryCode}`;
         }
         
         function navigateToSearch(term) {
@@ -368,283 +369,453 @@
             searchCode(); 
         }
 
-        // --- 渲染函數：特殊列表 (統一渲染 Neoplasm, Drug, E-Index) ---
-        function renderStandardSpecialTable(item) {
-            const rowClass = item.source.includes('Drug') ? 'drug-row' : 
-                             item.source.includes('Neoplasm') ? 'neoplasm-row' : 
-                             'eindex-row';
+        // --- 點擊摘要方框後顯示特定清單的函數 ---
+        function showSpecialList(source, count) {
+            const listContainer = document.getElementById('detailed-list-container');
             
-            const codePrefix = item.code ? item.code.substring(0, 3) : null;
-            const isClickable = item.code && item.code.length >= 3 && codePrefix in tabularData;
-            const clickableClass = isClickable ? 'is-clickable' : '';
-            // Neoplasm 使用紫色，Drug 使用橘色
-            const codeColor = item.source.includes('Neoplasm') ? '#9932cc' : 
-                              item.source.includes('Drug') ? '#ff7b00' : 
-                              '#0096d6';
+            if (!listContainer || !currentSpecialResults.length) {
+                return; 
+            }
             
-            let codeCell;
-            let descriptionCell = item.description;
+            const targetResults = currentSpecialResults.filter(item => item.source.includes(source));
+            
+            const sourceMapName = {
+                'Neoplasm': '腫瘤 (Neoplasm)',
+                'Drug': '中毒/藥物 (Drug)',
+                'E-Index': '外傷/外部原因 (E-Index)'
+            };
+            const name = sourceMapName[source] || source;
 
-            // ***** 強化腫瘤類型標示邏輯開始 *****
-            let codeTypeHtml = '';
-            let cleanedDescription = item.description;
+            // 1. 準備表格標頭 
+            let tableHeader = '';
+            const isNeoplasmOrDrug = (source === 'Neoplasm' || source === 'Drug');
+
+            if (isNeoplasmOrDrug) {
+                 // 使用多欄位表格標頭
+                const columns = source === 'Neoplasm' ? Object.values(NEOPLASM_COLUMNS_MAP) : ['Accident', 'Self-Harm', 'Assault', 'Undetermined', 'Adverse Effect', 'Underdosing'];
+                const headers = [source === 'Neoplasm' ? 'Neoplasm' : 'Drug/Substance', ...columns];
+                
+                tableHeader = `<thead>
+                                    <tr class="neoplasm-table-header">
+                                        ${headers.map(h => `<th>${h}</th>`).join('')}
+                                    </tr>
+                                </thead>`;
+            } else {
+                // E-Index 或其他，使用簡化標頭
+                tableHeader = `<thead>
+                                    <tr class="neoplasm-table-header">
+                                        <th style="width: 30%;">E-Index Term</th>
+                                        <th style="width: 70%;" colspan="6">Code/Reference</th>
+                                    </tr>
+                                </thead>`;
+            }
+
+
+            // 2. 準備 HTML 結構
+            let listHtml = `
+                <h3 style="margin-top: 20px; color: #333; border-bottom: 2px solid #ddd; padding-bottom: 5px;">
+                    ${name} 詳細清單 (${targetResults.length} 條結果)
+                </h3>
+                <div id="detailed-results-list" class="result-container">
+            `;
             
-            if (item.source.includes('Neoplasm')) {
-                const neoplasmTypes = ['MalignantPrimary', 'MalignantSecondary', 'CaInSitu', 'Benign', 'UncertainBehavior', 'UnspecifiedBehavior'];
-                
-                let foundType = null;
-                for (const type of neoplasmTypes) {
-                    if (item.description.endsWith(`, ${type}`)) {
-                        foundType = type;
-                        cleanedDescription = item.description.substring(0, item.description.length - (`, ${type}`).length);
-                        break;
-                    }
-                }
-                
-                if (foundType) {
-                    // 設定不同類型的顏色
-                    const typeColors = {
-                        'MalignantPrimary': '#B22222',       // 消防磚紅 (最醒目)
-                        'MalignantSecondary': '#CC0000',     // 深紅
-                        'CaInSitu': '#A0522D',               // 土色
-                        'Benign': '#228B22',                 // 森林綠
-                        'UncertainBehavior': '#FF8C00',      // 暗橙色
-                        'UnspecifiedBehavior': '#556B2F'     // 軍綠色
-                    };
+            if (targetResults.length === 0) {
+                listHtml += `<p style="color: #999; text-align: center; margin-top: 15px;">
+                                找不到與 ${name} 相關的結果。
+                             </p>`;
+            } else {
+                 if (isNeoplasmOrDrug) {
+                    // 使用特殊表格容器
+                    listHtml += `<div class="special-table-result">
+                                 <table style="width: 100%; border-collapse: collapse; border-top: 2px solid #ccc;">
+                                    ${tableHeader}
+                                    <tbody>`;
                     
-                    const color = typeColors[foundType] || '#708090'; 
+                    targetResults.forEach(item => {
+                        listHtml += renderStandardSpecialTable(item); // 渲染多欄位表格
+                    });
                     
-                    // 使用新的 class 和顏色，並加上邊框來強化視覺效果
-                    codeTypeHtml = `<span class="neoplasm-type-tag" style="color: ${color}; border: 1px solid ${color};">
-                                        ${foundType}
-                                   </span>`;
-                    descriptionCell = cleanedDescription;
+                    listHtml += `</tbody></table></div>`;
                 } else {
-                    descriptionCell = item.description; 
+                    // E-Index 使用單行渲染
+                    targetResults.forEach(item => {
+                        listHtml += renderEIndexItem(item); 
+                    });
                 }
-            } else {
-                descriptionCell = item.description;
             }
-            // ***** 強化腫瘤類型標示邏輯結束 *****
             
+            listHtml += '</div>';
+
+            // 3. 替換容器內容
+            listContainer.innerHTML = listHtml;
             
-            if (item.code) {
-                codeCell = `<span class="search-result-code ${clickableClass}" 
-                                data-code="${item.code}" 
-                                data-clickable="${isClickable}"
-                                style="color: ${codeColor};">
-                             ${item.code}
-                           </span>`;
-            } else {
-                codeCell = '-';
-            }
+            // 4. 註冊新的點擊事件
+            registerClickHandlers(); 
+        }
 
-            let refLinkHtml = '';
-            if (!item.code && (item.see || item.use)) { 
-                if (item.see) {
-                    refLinkHtml = `<span style="font-style: italic;">SEE:</span> 
-                                   <span class="see-link" data-search-term="${item.see}">${item.see}</span>`;
-                } else if (item.use) {
-                    refLinkHtml = `<span style="font-style: italic;">USE:</span> 
-                                   <span class="see-link" data-search-term="${item.use}">${item.use}</span>`;
-                }
-                descriptionCell = refLinkHtml; 
-            } else if (item.seeAlso) {
-                refLinkHtml = `<span style="font-style: italic; margin-left: 15px;">SEE ALSO:</span> 
-                               <span class="see-link" data-search-term="${item.seeAlso}">${item.seeAlso}</span>`;
-                descriptionCell += refLinkHtml; 
-            }
+        // --- 點擊事件註冊函數 ---
+        function registerClickHandlers() {
+            document.querySelectorAll('#results .search-result-code[data-clickable="true"]').forEach(span => {
+                span.onclick = () => navigateToDetail(span.dataset.code);
+            });
+            
+            document.querySelectorAll('#results .see-link').forEach(span => {
+                span.onclick = (e) => {
+                    const term = e.target.dataset.searchTerm;
+                    if (term) navigateToSearch(term);
+                };
+            });
 
-
-            return `<div class="special-table-result ${rowClass}">
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td class="special-table-code-col">${codeCell}</td>
-                                    <td>
-                                        ${descriptionCell}
-                                        ${codeTypeHtml}  
-                                        <span class="source">[${item.source}]</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>`;
+            document.querySelectorAll('.special-result-button').forEach(button => {
+                 button.onclick = (e) => {
+                    const target = e.currentTarget; 
+                    const source = target.dataset.source;
+                    const count = target.dataset.count;
+                    showSpecialList(source, count);
+                };
+            });
         }
 
 
-        function renderGeneralIndexItem(item) {
-            let codeHtml = '';
-            let mainContentHtml = item.description;
-            let refLinkHtml = '';
+    // --- 渲染函數：特殊列表 (多欄位表格 - Neoplasm & Drug) ---
+function renderStandardSpecialTable(item) {
+    const rowClass = item.source.includes('Drug') ? 'drug-row' : item.source.includes('Neoplasm') ? 'neoplasm-row' : '';
+    const isNeoplasm = item.source.includes('Neoplasm');
+    const isDrug = item.source.includes('Drug');
+    let termCell = item.description;
 
-            // 只有 CM Index 或 Tabular 數據才檢查是否可點擊
-            const isCMData = item.source.includes('Index') || item.source.includes('Tabular');
-            
-            if (item.code) {
-                const codePrefix = item.code.substring(0, 3);
-                // CM 數據才檢查 Tabular
-                const isClickable = isCMData && item.code.length >= 3 && codePrefix in tabularData;
-                const clickableClass = isClickable ? 'is-clickable' : '';
-                // PCS Index 使用藍綠色, CM Index/Tabular 使用藍色
-                const codeColor = item.source.includes('PCS Index') ? '#008080' : '#0056b3'; 
-                
-                codeHtml = `<span class="search-result-code ${clickableClass}" 
-                                  data-code="${item.code}" 
-                                  data-clickable="${isClickable}"
-                                  style="color: ${codeColor};">
-                                ${item.code}
-                            </span>`;
-            }
-
-            if (!item.code && (item.see || item.use)) { 
-                if (item.see) {
-                    refLinkHtml = `<span style="font-style: italic;">SEE:</span> 
-                                   <span class="see-link" data-search-term="${item.see}">${item.see}</span>`;
-                } else if (item.use) {
-                    refLinkHtml = `<span style="font-style: italic;">USE:</span> 
-                                   <span class="see-link" data-search-term="${item.use}">${item.use}</span>`;
-                }
-                mainContentHtml = refLinkHtml; 
-            } else if (item.seeAlso) {
-                refLinkHtml = `<span style="font-style: italic; margin-left: 15px;">SEE ALSO:</span> 
-                               <span class="see-link" data-search-term="${item.seeAlso}">${item.seeAlso}</span>`;
-                mainContentHtml += refLinkHtml; 
-            }
-            
-            return `<div class="result-item">
-                        ${codeHtml}
-                        ${mainContentHtml}
-                        <span class="source">[${item.source}]</span>
-                    </div>`;
+    // 處理 SEE/USE/SEE ALSO 邏輯 (保持不變)
+    let refLinkHtml = '';
+    if (!item.code && (item.see || item.use)) {
+        if (item.see) {
+            refLinkHtml = `<span style="font-style: italic;">SEE:</span> <span class="see-link" data-search-term="${item.see}">${item.see}</span>`;
+        } else if (item.use) {
+            refLinkHtml = `<span style="font-style: italic;">USE:</span> <span class="see-link" data-search-term="${item.use}">${item.use}</span>`;
         }
+        termCell = refLinkHtml;
+    } else if (item.seeAlso) {
+        refLinkHtml = `<span style="font-style: italic; margin-left: 10px;">SEE ALSO:</span> <span class="see-link" data-search-term="${item.seeAlso}">${item.seeAlso}</span>`;
+        termCell += refLinkHtml;
+    }
+
+    let rowContent = '';
+    // 1. 索引詞欄位 (保持不變)
+    rowContent += `<td class="neoplasm-term-col">${termCell} <span class="source">[${item.source}]</span></td>`;
+
+    // 2. 處理多欄位代碼
+    if (isNeoplasm || isDrug) {
+        const columns = isNeoplasm ? Object.keys(NEOPLASM_COLUMNS_MAP) : DRUG_COLUMNS;
+        const codes = item.specialCodes || {};
+        columns.forEach(colKey => {
+            const code = codes[colKey] || '-';
+            
+            // 檢查是否為 CM 代碼
+            const isCMCode = code.startsWith('A') || code.startsWith('B') || code.startsWith('C') || code.startsWith('D') || code.startsWith('E') || code.startsWith('F') || code.startsWith('G') || code.startsWith('H') || code.startsWith('I') || code.startsWith('J') || code.startsWith('K') || code.startsWith('L') || code.startsWith('M') || code.startsWith('N') || code.startsWith('O') || code.startsWith('P') || code.startsWith('Q') || code.startsWith('R') || code.startsWith('S') || code.startsWith('T') || code.startsWith('U') || code.startsWith('V') || code.startsWith('W') || code.startsWith('X') || code.startsWith('Y') || code.startsWith('Z');
+            
+            const codePrefix = code.substring(0, 3);
+            const isTabularLink = isCMCode && code.length >= 3 && codePrefix in tabularData;
+            
+            let cellContent = code;
+            
+            // **核心修改：將代碼顯示為可點擊連結 (<a> 標籤)**
+            if (code !== '-' && isTabularLink) {
+                // 替換為 <a href...> 連結
+                cellContent = `<a href="tabular_view.html?code=${codePrefix}" target="_blank" class="is-clickable" style="text-decoration: none; color: inherit;" title="點擊查看 ${codePrefix}.XX 詳目表 (Tabular List) 資訊">${code}</a>`;
+            }
+
+            rowContent += `<td class="neoplasm-code-col">${cellContent}</td>`;
+        });
+    }
+
+    // 3. 返回完整的表格行 HTML (保持不變)
+    return `<tr class="${rowClass}">${rowContent}</tr>`;
+}
+
+// --- 渲染函數：E-Index (簡潔列表 - 外傷/外部原因) ---
+function renderEIndexItem(item) {
+    const rowClass = item.source.includes('E-Index') ? 'eindex-row' : '';
+    let code = item.code || '-';
+    let mainContentHtml = item.description;
+
+    // 處理 SEE/USE/SEE ALSO 邏輯 (保持不變)
+    let refLinkHtml = '';
+    if (!item.code && (item.see || item.use)) {
+        if (item.see) {
+            refLinkHtml = `<span style="font-style: italic;">SEE:</span> <span class="see-link" data-search-term="${item.see}">${item.see}</span>`;
+        } else if (item.use) {
+            refLinkHtml = `<span style="font-style: italic;">USE:</span> <span class="see-link" data-search-term="${item.use}">${item.use}</span>`;
+        }
+        mainContentHtml = refLinkHtml;
+        code = '-'; // 如果是 SEE/USE 條目，代碼為 "-"
+    } else if (item.seeAlso) {
+        refLinkHtml = `<span style="font-style: italic; margin-left: 15px;">SEE ALSO:</span> <span class="see-link" data-search-term="${item.seeAlso}">${item.seeAlso}</span>`;
+        mainContentHtml += refLinkHtml;
+    }
+
+    // 代碼顏色邏輯 (與原版保持一致)
+    const codeColor = code.startsWith('Y') ? '#d9534f' : '#0096d6';
+    
+    // 檢查是否為 CM 代碼
+    const isCMCode = code.startsWith('A') || code.startsWith('B') || code.startsWith('C') || code.startsWith('C') || code.startsWith('D') || code.startsWith('E') || code.startsWith('F') || code.startsWith('G') || code.startsWith('H') || code.startsWith('I') || code.startsWith('J') || code.startsWith('K') || code.startsWith('L') || code.startsWith('M') || code.startsWith('N') || code.startsWith('O') || code.startsWith('P') || code.startsWith('Q') || code.startsWith('R') || code.startsWith('S') || code.startsWith('T') || code.startsWith('U') || code.startsWith('V') || code.startsWith('W') || code.startsWith('X') || code.startsWith('Y') || code.startsWith('Z');
+    
+    const codePrefix = code.substring(0, 3);
+    const isTabularLink = isCMCode && code.length >= 3 && codePrefix in tabularData;
+    const clickableClass = isTabularLink ? 'is-clickable' : '';
+    
+    let codeHtml = '-';
+    if (code !== '-') {
+        if (isTabularLink) {
+             codeHtml = `<a href="tabular_view.html?code=${codePrefix}" target="_blank" class="search-result-code ${clickableClass}" data-code="${code}" style="color: ${codeColor};" title="點擊查看 ${codePrefix}.XX 詳目表 (Tabular List) 資訊">${code}</a>`;
+        } else {
+             codeHtml = `<span class="search-result-code ${clickableClass}" data-code="${code}" style="color: ${codeColor};">${code}</span>`;
+        }
+    }
+
+
+    return `
+        <div class="${rowClass}">
+            <div class="eindex-code-area" style="border-right-color: ${codeColor}">
+                ${codeHtml}
+            </div>
+            <div class="eindex-content-area">
+                ${mainContentHtml}
+                <span class="source">[${item.source}]</span>
+            </div>
+        </div>
+    `;
+}
+
+ // --- 渲染函數：一般索引項目 (CM Index, Tabular List) ---
+function renderGeneralIndexItem(item) {
+    const rowClass = (item.source.includes('Index') || item.source.includes('Tabular')) ? 'eindex-row' : ''; 
+    let code = item.code || '-';
+    let mainContentHtml = item.description;
+
+    // 處理 SEE/USE/SEE ALSO 邏輯
+    let refLinkHtml = '';
+    if (!item.code && (item.see || item.use)) {
+        if (item.see) {
+            refLinkHtml = `<span style="font-style: italic;">SEE:</span> <span class="see-link" data-search-term="${item.see}">${item.see}</span>`;
+        } else if (item.use) {
+            refLinkHtml = `<span style="font-style: italic;">USE:</span> <span class="see-link" data-search-term="${item.use}">${item.use}</span>`;
+        }
+        mainContentHtml = refLinkHtml;
+        code = '-'; 
+    } else if (item.seeAlso) {
+        refLinkHtml = `<span style="font-style: italic; margin-left: 15px;">SEE ALSO:</span> <span class="see-link" data-search-term="${item.seeAlso}">${item.seeAlso}</span>`;
+        mainContentHtml += refLinkHtml;
+    }
+
+    // 代碼顏色邏輯 (與原版保持一致)
+    const codeColor = item.source.includes('Tabular') ? '#008080' : '#0056b3';
+    
+    // 檢查是否為 CM 代碼
+    const isCMData = item.source.includes('Index') || item.source.includes('Tabular');
+    const isCMCode = isCMData && code.match(/^[A-TV-Z]\d{2}/i);
+
+    const codePrefix = code.substring(0, 3);
+    // 判斷是否為 Tabular Link：必須是 CM code 且前三碼存在於 tabularData
+    const isTabularLink = isCMCode && code.length >= 3 && codePrefix in tabularData;
+    const clickableClass = isTabularLink ? 'is-clickable' : '';
+    
+    let codeHtml = '-';
+    if (code !== '-') {
+        if (isTabularLink) {
+             // 替換為 <a href...> 連結
+             codeHtml = `<a href="tabular_view.html?code=${codePrefix}" target="_blank" class="search-result-code ${clickableClass}" data-code="${code}" style="color: ${codeColor}; margin-right: 0;" title="點擊查看 ${codePrefix}.XX 詳目表 (Tabular List) 資訊">${code}</a>`;
+        } else {
+             // 保持原來的 <span>
+             codeHtml = `<span class="search-result-code ${clickableClass}" data-code="${code}" style="color: ${codeColor}; margin-right: 0;">${code}</span>`;
+        }
+    }
+
+
+    return `
+        <div class="${rowClass}">
+            <div class="eindex-code-area" style="border-right-color: ${codeColor}">
+                ${codeHtml}
+            </div>
+            <div class="eindex-content-area">
+                ${mainContentHtml}
+                <span class="source">[${item.source}]</span>
+            </div>
+        </div>
+    `;
+}
 
         // --- 搜索主函數 ---
         function searchCode() {
-            try {
-                if (!isDataLoaded) {
-                    resultsDiv.innerHTML = '<p style="color: red;">數據仍在載入中，請稍候。</p>';
-                    resultCountInfo.textContent = '';
-                    return;
-                }
-                
+             try {
                 const query = searchInput.value.trim();
                 resultsDiv.innerHTML = '';
-                resultCountInfo.textContent = ''; // 每次搜索前清空
+                resultCountInfo.textContent = ''; 
+                currentSpecialResults = []; 
 
-                if (query.length === 0) {
-                    resultsDiv.innerHTML = '<p>請在上方輸入框中輸入關鍵字或代碼進行模糊搜索。</p>';
+                if (!isDataLoaded || query.length === 0 || query.length < 2) {
+                    if (!isDataLoaded) resultsDiv.innerHTML = '<p style="color: red;">數據仍在載入中，請稍候。</p>';
+                    if (query.length === 0) resultsDiv.innerHTML = '<p>請在上方輸入框中輸入關鍵字或代碼進行模糊搜索。</p>';
+                    if (query.length > 0 && query.length < 2) resultsDiv.innerHTML = '<p>請輸入至少兩個字符進行搜索。</p>';
+                    document.getElementById('special-buttons-row').innerHTML = '';
                     return;
                 }
-                if (query.length < 2) {
-                    resultsDiv.innerHTML = '<p>請輸入至少兩個字符進行搜索。</p>';
-                    return;
-                }
 
-                const activeFilters = getActiveFilters();
-                const filteredData = filterIndexData(activeFilters);
-                
-                if (filteredData.length === 0) {
-                     resultsDiv.innerHTML = '<p>根據您選擇的篩選條件，無符合搜索範圍的數據集。</p>';
-                     return;
-                }
-                
-                const options = {
-                    keys: ['code', 'description', 'see', 'seeAlso', 'use'], 
-                    threshold: 0.3, 
-                    includeMatches: true, 
-                    ignoreLocation: true 
-                };
-                const tempFuse = new Fuse(filteredData, options);
-                const MAX_RESULTS = 500;
-                const fuseResults = tempFuse.search(query); 
-
-                // 排序和去重邏輯
+                const startTime = performance.now();
+                const activeFilters = getActiveFilters(); 
                 const queryLower = query.toLowerCase();
-                fuseResults.sort((a, b) => {
-                    const calculateCustomScore = (item) => {
-                        const code = item.code ? item.code.trim().toLowerCase() : '';
-                        const desc = item.description ? item.description.trim().toLowerCase() : '';
-                        
-                        if (code === queryLower) return 4;
-                        if (code.startsWith(queryLower)) return 3;
-                        if (desc === queryLower) return 2;
-                        if (desc.startsWith(queryLower)) return 1;
-                        return 0; 
-                    };
+
+                const fuseOptions = {
+                    keys: ['code', 'description', 'see', 'seeAlso', 'use'], 
+                    threshold: 0.35, 
+                    includeScore: true,
+                    ignoreLocation: true,
+                    distance: 100
+                };
+                
+                const fuse = new Fuse(fullIndex, fuseOptions);
+                let fuseResults = fuse.search(query); 
+
+                let counts = {
+                    Neoplasm: { name: '腫瘤', count: 0, color: '#9932cc' },
+                    Drug: { name: '中毒/藥物', count: 0, color: '#ff7b00' },
+                    EIndex: { name: '外傷/外部原因', count: 0, color: '#0096d6' },
+                };
+                const PRIORITY_SOURCES = ["Neoplasm", "Drug", "E-Index"];
+                
+                fuseResults = fuseResults.map(result => {
+                    const item = result.item;
+                    const source = item.source;
+                    let score = result.score;
                     
-                    const customScoreA = calculateCustomScore(a.item);
-                    const customScoreB = calculateCustomScore(b.item);
+                    if (source.includes('Neoplasm')) {
+                        counts.Neoplasm.count++;
+                    } else if (source.includes('Drug')) {
+                        counts.Drug.count++;
+                    } else if (source.includes('E-Index')) {
+                        counts.EIndex.count++;
+                    }
                     
-                    if (customScoreA !== customScoreB) {
-                        return customScoreB - customScoreA;
+                    let scoreAdjustment = 0;
+                    if (PRIORITY_SOURCES.includes(source)) {
+                        scoreAdjustment += 0.08; 
                     }
-                    if (a.score !== b.score) {
-                        return a.score - b.score;
+                    if (item.code && item.code.trim().toLowerCase() === queryLower) {
+                        scoreAdjustment += 0.2; 
+                    } else if (item.code && item.code.trim().toLowerCase().startsWith(queryLower)) {
+                        scoreAdjustment += 0.1; 
                     }
-                    return 0; 
+                    
+                    result.adjustedScore = Math.max(0, score - scoreAdjustment);
+                    return result;
                 });
                 
-                const uniqueResults = [];
+                fuseResults.sort((a, b) => a.adjustedScore - b.adjustedScore);
+
+                const endTime = performance.now();
+                const searchTime = (endTime - startTime).toFixed(2);
+
+                const filterMode = activeFilters[0]; 
+
+
+                const totalSpecial = counts.Neoplasm.count + counts.Drug.count + counts.EIndex.count;
+                
+                let specialButtonsHtml = '';
+                
+                if (totalSpecial > 0) {
+                     specialButtonsHtml = 
+                        ['Neoplasm', 'Drug', 'EIndex'].map(key => {
+                            const item = counts[key];
+                            const sourceKey = (key === 'EIndex' ? 'E-Index' : key); 
+                            
+                            return `
+                                <button class="special-result-button" 
+                                     data-source="${sourceKey}" 
+                                     data-count="${item.count}"
+                                     style="background-color: ${item.color}; border-color: ${item.color};">
+                                    ${item.name} 
+                                    <span class="button-count">(${item.count})</span>
+                                </button>
+                            `;
+                        }).join('');
+                } else {
+                     specialButtonsHtml = `<span style="font-size: 0.9em; color: #888; font-style: italic;">
+                                                本次搜索未找到任何腫瘤/中毒/外傷相關條目。
+                                           </span>`;
+                }
+
+                document.getElementById('special-buttons-row').innerHTML = specialButtonsHtml;
+                
+                const MAX_RESULTS = 500;
+                const filterName = filterMode === 'Special' ? '特殊列表 (腫瘤/外傷/中毒)' : '一般索引/Tabular/PCS';
+
+                const filteredItems = [];
                 const seenKeys = new Set();
                 
                 for (const result of fuseResults) {
                     const item = result.item;
-                    const key = `${item.code || ''}|${item.description}`; 
+                    const key = `${item.code || ''}|${item.description}|${item.source}`; 
                     
-                    if (!seenKeys.has(key)) {
+                    if (seenKeys.has(key)) continue;
+                    
+                    const isSpecial = PRIORITY_SOURCES.includes(item.source);
+                    
+                    if (isSpecial) {
+                        currentSpecialResults.push(item); 
+                    }
+
+                    let shouldInclude = false;
+
+                    // 在 General 模式下，我們只顯示非特殊條目
+                    if (filterMode === 'General' && !isSpecial) {
+                        shouldInclude = true;
+                    } 
+                    // 在 General 模式下，如果用戶搜索的關鍵字跟特殊條目中的主代碼完全匹配，也應顯示，但我們這裡只篩選非特殊條目。
+                    
+                    
+                    if (shouldInclude) {
                         seenKeys.add(key);
-                        uniqueResults.push(item); 
+                        filteredItems.push(item);
+                        if (filteredItems.length >= MAX_RESULTS) break; 
                     }
                 }
-
-                const filteredResults = uniqueResults.slice(0, MAX_RESULTS);
-
-                // 顯示結果
-                if (filteredResults.length === 0) {
-                    resultsDiv.innerHTML = `<p>找不到與 "${query}" 相關的代碼或描述。請檢查篩選條件。</p>`;
-                    resultCountInfo.textContent = '0 條結果';
+                
+                if (filterMode === 'Special') {
+                    
+                    resultCountInfo.textContent = `找到 ${currentSpecialResults.length} 條特殊結果 (點擊上方按鈕查看詳情，耗時 ${searchTime} ms)：`;
+                    
+                    resultsDiv.innerHTML += `
+                        <div id="detailed-list-container">
+                            <p id="special-list-placeholder" style="text-align: center; padding: 30px; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9; font-weight: bold;">
+                                請點擊上方的 **腫瘤/中毒/外傷** 按鈕，以展開並查看該類別的詳細結果清單。
+                            </p>
+                        </div>
+                    `;
                 } else {
-                    const filterName = activeFilters[0] === 'Special' ? '特殊列表 (腫瘤/外傷/中毒)' : '一般索引/Tabular';
-                    
-                    // ***** 核心變動：更新結果數量顯示在上方 *****
-                    resultCountInfo.textContent = `找到 ${filteredResults.length} 條結果 (前 ${MAX_RESULTS} 條, 數據範圍: ${filterName})：`;
+                    resultCountInfo.textContent = `找到 ${filteredItems.length} 條結果 (前 ${MAX_RESULTS} 條, 數據範圍: ${filterName}, 耗時 ${searchTime} ms)：`;
 
-                    // 僅將實際的結果列表放入 resultsDiv
-                    let html = '<div class="result-container">';
+                    let listHtml = '<div id="detailed-list-container"><div id="detailed-results-list" class="result-container">';
                     
-                    filteredResults.forEach(item => {
-                        const isSpecial = item.source.includes('Neoplasm') || item.source.includes('Drug') || item.source.includes('E-Index');
-                        
-                        if (isSpecial) {
-                            html += renderStandardSpecialTable(item);
-                        } else {
-                            html += renderGeneralIndexItem(item);
-                        }
-                    });
-
-                    html += '</div>';
-                    resultsDiv.innerHTML = html;
-                    
-                    // 註冊點擊事件
-                    document.querySelectorAll('#results .search-result-code, #results .neoplasm-code-link').forEach(span => {
-                        const code = span.dataset.code;
-                        const isClickable = span.dataset.clickable === 'true';
-
-                        if (code && isClickable) { 
-                             span.addEventListener('click', (e) => navigateToDetail(code));
-                        }
-                    });
-                    
-                    document.querySelectorAll('#results .see-link').forEach(span => {
-                        span.addEventListener('click', (e) => {
-                            const term = e.target.dataset.searchTerm;
-                            if (term) navigateToSearch(term);
+                    if (filteredItems.length === 0) {
+                        listHtml += `<p style="color: #999; text-align: center; margin-top: 15px;">
+                                        在當前篩選模式 (${filterName}) 下，找不到與 "${query}" 相關的代碼或描述。
+                                     </p>`;
+                    } else {
+                        filteredItems.forEach(item => {
+                            listHtml += renderGeneralIndexItem(item);
                         });
-                    });
+                    }
+                    listHtml += '</div></div>';
+                    resultsDiv.innerHTML += listHtml;
                 }
+                
+                registerClickHandlers(); 
+
             } catch (e) {
                 console.error('Search function error:', e);
+                document.getElementById('results').innerHTML = `<p style="color: red; padding: 15px; border: 1px solid red; border-radius: 5px;">
+                    <strong>致命錯誤：搜索執行中斷。</strong><br>
+                    請將以下完整的錯誤信息複製給我，或檢查瀏覽器控制台 (F12)。<br>
+                    <pre style="white-space: pre-wrap; word-wrap: break-word; color: red; background-color: #ffe6e6; padding: 10px; margin-top: 10px; border-radius: 3px;">${e.message}</pre>
+                </p>`;
             }
         }
         
@@ -653,7 +824,6 @@
         // --- 主載入和初始化 ---
         async function initialize() {
             try {
-                // 數據檔案名假設與 convert.js 產出的名稱一致
                 const [cmIndex, tabularJson, pcsIndexData] = await Promise.all([
                     loadJson('data_cm_index.json', 'status-cm', 'CM Index'),
                     loadJson('data_tabular_index.json', 'status-tabular', 'Tabular List'),
@@ -678,12 +848,11 @@
                 
                 searchInput.addEventListener('input', debouncedSearch);
                 
-                // 註冊篩選器的 change 事件
                 document.querySelectorAll('#filter-container input[type="radio"]').forEach(radio => {
                     radio.addEventListener('change', debouncedSearch);
                 });
                 
-                searchCode(); // 首次執行搜索
+                searchCode(); 
 
             } catch (e) {
                 console.error('Initialization failed:', e);
@@ -697,7 +866,6 @@
             }
         });
 
-        // 啟動應用
         initialize();
     </script>
 
