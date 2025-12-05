@@ -6,9 +6,62 @@
     <style>
         /* 樣式設計符合您提供的截圖需求 (清晰、結構化) */
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background-color: #eef2f7; }
-        .container { max-width: 1200px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background-color: #ffffff; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); 
+        }
         
-        h1 { color: #1e3a8a; border-bottom: 4px solid #3b82f6; padding-bottom: 15px; margin-bottom: 30px; font-weight: 700; font-size: 1.8em; }
+        /* --- 新增：懸浮按鈕容器樣式 --- */
+        #sticky-header {
+            /* 使用 fixed 定位，使其固定在視窗左上角 */
+            position: fixed; 
+            top: 20px; /* 距離視窗頂部 20px */
+            left: 20px; /* 距離視窗左側 20px */
+            z-index: 1000; /* 確保按鈕在其他元素之上 */
+        }
+        
+        /* --- 修改：返回按鈕樣式 --- */
+        #back-button {
+            background-color: #f87171; /* 柔和的紅色 */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px; /* 略大於原來的 6px */
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            /* 新增浮動效果 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
+        }
+        #back-button:hover {
+            background-color: #ef4444; /* 深一點的紅色 */
+            transform: translateY(-2px); /* 讓它感覺被抬起 */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+        }
+        #back-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 移除 .header-area 樣式，因為不再需要 */
+        /* h1 的頂部間距也做了調整 */
+        h1 { 
+            color: #1e3a8a; 
+            border-bottom: 4px solid #3b82f6; 
+            padding-bottom: 15px; 
+            margin-top: 10px; /* 調整頂部 margin */
+            margin-bottom: 30px; 
+            font-weight: 700; 
+            font-size: 1.8em; 
+        }
         
         /* 主分類區塊 (前三碼) */
         .category { 
@@ -73,7 +126,7 @@
             padding-left: 20px; 
             padding-right: 15px; 
             
-            /* 確保附註框頂部沒有圓角，更貼合 L24 框底部 */
+            /* 確保附註框頂部沒有圓角，更貼合 L24 的藍邊 */
             border-top-left-radius: 0;
             border-top-right-radius: 0;
         }
@@ -173,14 +226,26 @@
         .sub-code-notes-container .excludes1 { background-color: #fff6f5; border: 1px solid #ffdeda; }
         .sub-code-notes-container .excludes2 { background-color: #fafff5; border: 1px solid #e7f5d9; }
         .sub-code-notes-container .instructions { background-color: #f5faff; border: 1px solid #c8d9ff; }
-        .sub-code-notes-container .seven-char { background-color: #fffef2; border: 1px solid #ffeeaf; }
+        .sub-code-notes-container .seven-char { background-color: #fffef2; border: 19px solid #ffeeaf; }
 
         .not-found { color: #d9534f; font-weight: bold; padding: 20px; background-color: #ffe0e0; border-radius: 8px; }
     </style>
 </head>
 <body>
+    
+    <div id="sticky-header"> 
+        <button id="back-button" onclick="window.history.back()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
+            </svg>
+            返回搜索結果
+        </button>
+    </div>
+
     <div class="container">
+        
         <h1 id="page-title">ICD-10-CM Tabular List 詳細檢視</h1>
+        
         <div id="details-container">
             </div>
     </div>
