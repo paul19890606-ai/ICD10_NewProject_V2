@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>ICD-10-PCS 2023 查詢工具（優化版本）</title>
+  <title>ICD-10-PCS 查詢</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
@@ -16,10 +16,11 @@
       margin: 0;
       background: #f5f5f5;
       color: #111827;
+      /* 確保 body 具備相對定位，讓浮動連結可以依附 */
     }
 
     .app {
-      max-width: 2000px;
+      max-width: 1400px; /* [修正] 調整最大寬度，讓居中效果更明顯 */
       margin: 3px;
       padding: 24px 20px 40px;
       background: #ffffff;
@@ -27,40 +28,116 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
     }
     
-    /* 新增：標題和按鈕的容器 */
+    /* [重要修正] 返回連結的浮動樣式 */
+    .floating-back-link {
+        /* 改為 Fixed 定位，確保它始終懸浮在視窗右上角 */
+        position: fixed; 
+        top: 20px; /* 距離視窗頂部 20px */
+        right: 20px; /* 距離視窗右側 20px */
+        z-index: 1000; /* 確保它在所有內容之上 */
+        
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px; /* 增大 padding，更像按鈕 */
+        border-radius: 8px; /* 調整圓角 */
+        background: #4f46e5; /* 藍色背景 */
+        color: #ffffff; /* 白色文字 */
+        text-decoration: none;
+        font-size: 0.9rem; 
+        font-weight: 600;
+        border: 2px solid #4f46e5; 
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 增加陰影使其更突出 */
+        transition: background-color 0.2s, box-shadow 0.2s;
+    }
+    .floating-back-link:hover {
+        background: #4338ca; /* Hover 時顏色變深 */
+        border-color: #4338ca;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+    .floating-back-link svg {
+        width: 16px;
+        height: 16px;
+        fill: #ffffff; /* SVG 圖標顏色改為白色 */
+    }
+    
+    /* 新增：清除已選擇代碼的浮動按鈕樣式 */
+    .floating-clear-btn {
+        position: fixed; 
+        top: 70px; /* 位於返回按鈕下方 (20px + 連結高度 ~36px + 間隔 14px) */
+        right: 20px; 
+        z-index: 1000;
+        
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        background: #dc2626; /* 紅色背景 */
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 0.9rem; 
+        font-weight: 600;
+        border: 2px solid #dc2626; 
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+        margin: 0;
+        line-height: normal;
+    }
+    .floating-clear-btn:hover {
+        background: #b91c1c; /* Hover 時顏色變深 */
+        border-color: #b91c1c;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+    .floating-clear-btn:disabled {
+        background: #9ca3af;
+        border-color: #9ca3af;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    
+    /* [修正] 確保 app 區塊不會被 floating-back-link 擋住標題，並實現居中 */
+    @media (min-width: 640px) {
+        .app {
+            /* 預留右側空間給浮動按鈕，防止按鈕遮擋內容 */
+            padding-right: 120px; 
+            /* 修正：設置左右 margin 為 auto，實現居中 */
+            margin: 20px auto; 
+        }
+    }
+
+    /* 新增：標題和狀態的容器 */
     .header-row {
       display: flex;
-      justify-content: space-between;
+      justify-content: space-between; /* <-- 讓標題和狀態區塊分列兩邊 */
       align-items: center;
-      margin-bottom: 12px; /* 增加標題區塊底部的間距 */
+      margin-bottom: 12px; 
+      flex-wrap: wrap; 
+      gap: 16px; 
     }
+    
+    /* [新增] 標題右側的狀態容器樣式 */
+    .header-status-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        font-size: 0.82rem; 
+        color: #4b5563;
+    }
+
 
     h1 {
       margin-top: 0;
-      margin-bottom: 0; /* 確保 h1 在 header-row 內不產生額外間距 */
+      margin-bottom: 0;
+      min-width: 0; 
       font-size: 1.6rem;
       letter-spacing: 0.03em;
     }
     
-    /* 新增：返回按鈕樣式 */
-    .back-link {
-      display: inline-block;
-      padding: 6px 14px;
-      border-radius: 999px;
-      background: #4f46e5;
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 600;
-      transition: background 0.2s;
-      white-space: nowrap;
-      flex-shrink: 0; /* 防止被標題擠壓 */
-    }
-
-    .back-link:hover {
-      background: #3730a3;
-    }
-
     .subtitle {
       margin-top: 4px;
       margin-bottom: 12px;
@@ -82,31 +159,43 @@
       font-size: 0.9rem;
       font-weight: 600;
     }
-
-    #xmlFile,
-    #defFile,
-    #indexFile {
-      font-size: 0.85rem;
-    }
-
-    #searchInput,
+    
+    /* 新增 Summary 區塊內的 Select 樣式 */
+    .summary-select,
     #indexSearchInput {
       flex: 1;
-      min-width: 180px;
-      padding: 9px 12px;
-      border-radius: 999px;
+      min-width: 150px; 
+      padding: 6px 10px; 
+      border-radius: 6px; 
       border: 1px solid #d1d5db;
-      font-size: 0.95rem;
+      font-size: 0.9rem; 
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
+      background-color: #ffffff;
+      appearance: none; 
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3e%3cpath d='M7 7l3 3 3-3' stroke='%234B5563' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.6rem center;
+      background-size: 1rem 1rem; 
+      padding-right: 2rem; 
     }
 
-    #searchInput:focus,
+    #indexSearchInput {
+        min-width: 180px;
+        padding: 9px 12px;
+        font-size: 0.95rem;
+        border-radius: 8px;
+        background-position: right 0.75rem center;
+        background-size: 1.25rem 1.25rem;
+        padding-right: 2.5rem;
+    }
+
+    .summary-select:focus,
     #indexSearchInput:focus {
       border-color: #4f46e5;
       box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
     }
-
+    
     .hint {
       font-size: 0.8rem;
       color: #6b7280;
@@ -121,20 +210,49 @@
       font-size: 0.78rem;
     }
 
+    /* 狀態列的樣式調整 (現在只用於 resultInfo) */
     .status-row {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start; 
       align-items: center;
       margin-top: 6px;
       margin-bottom: 8px;
       font-size: 0.82rem;
       color: #4b5563;
-      gap: 6px;
+      gap: 12px; 
       flex-wrap: wrap;
     }
     
-    /* 移除先前隱藏狀態列的 CSS 規則，讓它們可以顯示 */
-
+    /* 載入狀態指示燈的樣式 */
+    .load-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        color: #f97316; 
+        transition: color 0.3s;
+    }
+    .indicator-dot {
+        width: 10px; 
+        height: 10px;
+        border-radius: 50%;
+        background: #f97316; 
+        transition: background-color 0.3s;
+    }
+    .load-indicator.ok {
+        color: #047857;
+    }
+    .load-indicator.ok .indicator-dot {
+        background: #047857; 
+    }
+    .load-indicator.error {
+        color: #b91c1c; 
+    }
+    .load-indicator.error .indicator-dot {
+        background: #b91c1c; 
+    }
+    
+    
     .badge {
       display: inline-flex;
       align-items: center;
@@ -167,6 +285,38 @@
       margin-bottom: 6px;
       font-size: 1rem;
     }
+    
+    /* 讓 Section/Body System/Operation 的 3 碼前綴更明顯 */
+    .highlight-code-prefix {
+        font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        font-weight: 900 !important; 
+        font-size: 1.2rem; 
+        color: #1e40af; 
+        margin-right: 6px;
+    }
+
+
+    /* Summary Detail 區塊使用 Grid 佈局，包含 Select 元素 */
+    .pcs-summary-detail {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr; /* 三個欄位 */
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    
+    /* 調整 Summary 內部的 Select 容器樣式 */
+    .summary-select-container {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0; 
+    }
+    .summary-select-container span {
+        font-style: italic;
+        font-size: 0.78rem;
+        color: #6b7280;
+    }
 
     .pcs-summary-row {
       display: flex;
@@ -191,10 +341,23 @@
       font-size: 0.86rem;
     }
 
+    /* 讓完整 7 碼代碼更明顯 (藍色主題) */
     .selected-code-box code {
       font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono",
         "Courier New", monospace;
+      font-weight: 900 !important; 
+      font-size: 1.3rem !important; 
+      color: #1e40af; 
+      padding: 2px 6px;
+      background-color: #eff6ff; 
+      border-radius: 4px;
     }
+    
+    /* 錯誤代碼的樣式覆蓋 (確保錯誤提示文字仍是紅色，但代碼主色是藍色) */
+    .selected-code-box code:not([style*="color:#1e40af"]) {
+        color: #1e40af !important; 
+    }
+
 
     .table-wrapper {
       margin-top: 12px;
@@ -259,7 +422,7 @@
     }
 
     .error {
-      color: #b91c1c;
+      color: #b91c1c; 
     }
 
     .option-row {
@@ -274,17 +437,21 @@
       margin-top: 2px;
     }
 
-    .option-code {
-      font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono",
-        "Courier New", monospace;
-      font-weight: 600;
-      margin-right: 4px;
+    /* 讓 Body Part/Approach/Device/Qualifier 的單碼代碼更明顯 (藍色主題) */
+    .option-row .option-code {
+        font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        font-weight: 900; 
+        font-size: 1.0rem; 
+        color: #1e40af; 
+        margin-right: 6px;
     }
 
     /* Index 查詢結果區塊 */
+    /* 調整：移除垂直邊距，由外部容器管理 */
     .index-result-box {
-      margin-top: 4px;
-      margin-bottom: 10px;
+      margin-top: 0; 
+      margin-bottom: 0; 
       max-height: 220px;
       overflow: auto;
       border-radius: 8px;
@@ -340,49 +507,100 @@
       color: #6b7280;
       margin-top: 2px;
     }
+    
+    /* [新增] Index 區塊的 Flex 佈局容器 */
+    .index-section-flex-container {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-top: 4px; 
+        margin-bottom: 10px; 
+    }
 
     @media (max-width: 640px) {
       .app {
         margin: 12px;
         padding: 16px;
         border-radius: 12px;
+        padding-right: 16px; 
       }
       h1 {
         font-size: 1.3rem;
       }
-      /* 新增：移動到小螢幕時，標題和按鈕仍然保持並列 */
+      /* 小螢幕下，狀態區塊應該在標題下方獨立一行 */
       .header-row {
-          flex-direction: row;
+          flex-direction: column;
           align-items: flex-start;
+          gap: 8px;
+      }
+      .header-status-container {
+        /* 在小螢幕上讓狀態區塊佔滿寬度 */
+        width: 100%;
+      }
+      
+      /* [修正] 小螢幕下浮動按鈕位置調整 */
+      .floating-back-link {
+        right: 10px; 
+        top: 10px; 
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        border-radius: 6px;
+      }
+      .floating-clear-btn {
+        top: 50px; /* 10px + 連結高度 ~30px + 間隔 10px */
+        right: 10px; 
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        border-radius: 6px;
+      }
+      
+      /* 小螢幕下 Summary 區塊的佈局調整 */
+      .pcs-summary-detail {
+        grid-template-columns: 1fr; /* 變成單欄 */
+        gap: 10px;
+      }
+      
+      /* [新增] 小螢幕下 Index 查詢區塊改成垂直排列 */
+      .index-section-flex-container {
+          flex-direction: column;
+          gap: 10px; 
       }
     }
   </style>
 </head>
 <body>
+  
+  <a href="index.html" class="floating-back-link">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
+    </svg>
+    返回搜索結果
+  </a>
+
+  <button id="clearSelectionsBtn" class="floating-clear-btn" disabled>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+    </svg>
+    清除已選(4-7碼)
+  </button>
+
   <div class="app">
     <div class="header-row">
-      <h1>ICD-10-PCS 2023 查詢工具（優化版）</h1>
-      <a href="index.html" class="back-link">返回 Index</a>
+      <h1>ICD-10-PCS 查詢</h1>
+      
+      <div class="header-status-container">
+        <div id="integratedLoadStatus" class="load-indicator">
+            <div id="indicatorDot" class="indicator-dot"></div>
+            <span id="loadStatusText">數據載入狀態：載入中...</span>
+        </div>
+        <div class="badge">
+          <span class="badge-dot"></span>
+          <span>來源：ICD-10-PCS 2023 - <span id="defHintText">定義檔載入中...</span></span>
+        </div>
+      </div>
+      
     </div>
     <div class="file-row"></div>
-<!--  <label>1. Tables 檔：</label>
-  <span>自動載入 <code>icd10pcs_tables_2023.xml</code></span>
-
-
-<div class="file-row">
-  <label>2. Definitions 檔（可選）：</label>
-  <span>自動載入 <code>icd10pcs_definitions_2023.xml</code></span>
-</div>
-
-<div class="file-row">
-  <label>3. Index 檔（處置名稱查詢，可選）：</label>
-  <span>自動載入 <code>icd10pcs_index_2023.xml</code></span>
-</div></div>-->
-
-
-
-
-
     <div class="search-row">
       <label for="indexSearchInput">處置名稱：</label>
       <input
@@ -393,72 +611,85 @@
         disabled
       />
     </div>
-    <div class="hint">
-      ▸ 支援模糊搜尋：輸入部分關鍵字即可（不分大小寫）。<br />
-      ▸ 點選結果中的代碼膠囊（例如 <code>0DTJ</code>），會自動帶入前三碼到上方欄位並查詢 PCS Table。
-    </div>
-
-    <div class="search-row">
-      <label for="searchInput">PCS 前 3 碼：</label>
-      <input
-        id="searchInput"
-        type="text"
-        placeholder="請先載入 Tables 檔，再輸入前 3 碼（例如：0BD）"
-        autocomplete="off"
-        disabled
-      />
-    </div>
-    <div class="hint">
-      ▸ 使用「起始比對」：只抓代碼開頭 = 你輸入的 3 碼。<br />
-      ▸ 四欄各選一個，系統會自動補齊最可能的合法組合並顯示完整 7 碼。
     
-
-
     <div class="status-row">
-      <div id="loadStatus">尚未載入 Tables XML。</div>
-      <div class="badge">
-        <span class="badge-dot"></span>
-        <span>來源：ICD-10-PCS 2023</span>
+      <div id="resultInfo">請先載入 Tables 檔，再選擇前 3 碼。</div>
+    </div>
+
+    <div class="index-section-flex-container">
       
-    </div>
-    <div class="status-row">
-      <div id="defStatus">尚未載入 Definitions XML（hover 提示關閉）。</div>
-    </div>
-    <div class="status-row">
-      <div id="indexStatus">尚未載入 Index XML（處置名稱查詢關閉）。</div>
-    </div></div>
-    <div class="status-row">
-      <div id="resultInfo">請先載入 Tables 檔，再輸入前 3 碼。</div>
-    </div>
+      <div id="indexResultBox" class="index-result-box" style="flex-grow: 1;">
+        <div class="index-result-empty">
+          目前尚未載入 Index XML，或尚未輸入處置名稱。
+        </div>
+      </div>
 
-    <div id="indexResultBox" class="index-result-box">
-      <div class="index-result-empty">
-        目前尚未載入 Index XML，或尚未輸入處置名稱。
+      <div style="padding: 12px; background: #f9fafb; border-radius: 8px; border: 1px solid #d1d5db; display: flex; flex-direction: column; align-items: stretch; min-width: 200px; flex-shrink: 0;">
+        <input
+          type="text"
+          id="prefixInput"
+          maxlength="3"
+          placeholder="使用前三碼查詢"
+          style="
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding: 6px 10px;
+            margin-bottom: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            text-transform: uppercase;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+          "
+        />
+        <button id="searchPrefixBtn" disabled style="
+            background-color: hsl(0, 0%, 100%);
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            line-height: normal;
+          ">
+          🔍
+        </button>
+        <small id="prefixError" style="display: none; color: #dc2626; font-size: 0.75rem; margin-top: 6px;">
+            請輸入三個英數字元
+        </small>
       </div>
     </div>
-<div id="pcsSummary" class="pcs-summary">
+    <div id="pcsSummary" class="pcs-summary">
       <div id="summaryTitle" class="pcs-summary-title">
-        尚未查詢
+        選擇前 3 碼以查詢 PCS Table
       </div>
-      <div id="summaryDetail">
-        <div class="pcs-summary-row">
-          <span><em>Section</em></span>
-          <span>—</span>
+      <div id="summaryDetail" class="pcs-summary-detail">
+        <div class="summary-select-container">
+            <span>Section (第 1 碼)</span>
+            <select id="sectionSelect" class="summary-select" disabled>
+                <option value="">-- 請先載入 Tables 檔 --</option>
+            </select>
         </div>
-        <div class="pcs-summary-row">
-          <span><em>Body System</em></span>
-          <span>—</span>
+        <div class="summary-select-container">
+            <span>Body System (第 2 碼)</span>
+            <select id="bodySystemSelect" class="summary-select" disabled>
+                <option value="">-- 請先選擇 Section --</option>
+            </select>
         </div>
-        <div class="pcs-summary-row">
-          <span><em>Operation</em></span>
-          <span>—</span>
+        <div class="summary-select-container">
+            <span>Operation (第 3 碼)</span>
+            <select id="operationSelect" class="summary-select" disabled>
+                <option value="">-- 請先選擇 Body System --</option>
+            </select>
         </div>
       </div>
       <div id="selectedCodeBox" class="selected-code-box">
         目前尚未選取完整 7 碼代碼。
       </div>
     </div>
-
+    
     <div class="table-wrapper">
       <table>
         <thead>
@@ -482,936 +713,1288 @@
 
   <script>
     
-// 固定檔案的 URL
-// 【修正點 2：修正檔案路徑，假設 XML 檔案與 HTML 檔案在同一目錄】
-const TABLES_URL = "icd10pcs_tables_2023.xml";
-const DEFINITIONS_URL = "icd10pcs_definitions_2023.xml";
-const INDEX_URL = "icd10pcs_index_2023.xml";
+// 固定檔案的路徑
+const TABLES_XML_URL = "icd10pcs_tables_2023.xml";
+const DEFINITIONS_XML_URL = "icd10pcs_definitions_2023.xml";
+const INDEX_XML_URL = "icd10pcs_index_2023.xml";
 
-// 自動載入 Tables
-function loadTables() {
-  setLoadStatus("正在載入 Tables 檔案...", "loading");
-  fetch(TABLES_URL)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("無法載入 Tables 檔案");
+// XML 載入狀態
+const LOAD_STATUS = {
+  NOT_LOADED: "尚未載入",
+  LOADING: "載入中...",
+  OK: "載入完成",
+  ERROR: "載入失敗",
+};
+
+// 元素參考
+const integratedLoadStatus = document.getElementById("integratedLoadStatus");
+const indicatorDot = document.getElementById("indicatorDot");
+const loadStatusText = document.getElementById("loadStatusText");
+const defHintText = document.getElementById("defHintText"); 
+
+const sectionSelect = document.getElementById("sectionSelect");
+const bodySystemSelect = document.getElementById("bodySystemSelect");
+const operationSelect = document.getElementById("operationSelect");
+
+const indexSearchInput = document.getElementById("indexSearchInput");
+const resultBody = document.getElementById("resultBody");
+const resultInfo = document.getElementById("resultInfo");
+const summaryTitle = document.getElementById("summaryTitle");
+const summaryDetail = document.getElementById("summaryDetail"); 
+const selectedCodeBox = document.getElementById("selectedCodeBox");
+const indexResultBox = document.getElementById("indexResultBox");
+
+// 新增：清除選擇按鈕的引用
+const clearSelectionsBtn = document.getElementById("clearSelectionsBtn");
+
+// [新增] 直接輸入前三碼的元素參考
+const prefixInput = document.getElementById('prefixInput');
+const searchPrefixBtn = document.getElementById('searchPrefixBtn');
+const prefixError = document.getElementById('prefixError');
+
+
+// 數據存儲
+let icdCodes = []; // [{code, desc}]
+let icdCodeMap = new Map(); // code -> desc
+let isLoaded = false;
+let validMap = new Map(); // 存儲所有 3 碼前綴的合法選項和組合
+let sectionOptions = new Map(); // code -> text
+let bodySystemOptions = new Map(); // code -> Map(text -> prefixes)
+let operationOptions = new Map(); // code -> Map(text -> prefixes)
+
+const definitionMaps = {
+  bodypart: new Map(),
+  device: new Map(),
+};
+let defLoaded = false;
+let indexEntries = [];
+let indexLoaded = false;
+let currentPrefix = "";
+let selections = {
+  bodypart: null,
+  approach: null,
+  device: null,
+  qualifier: null,
+};
+
+// 追蹤三個 XML 檔案的載入狀態
+const fileLoadState = {
+    tables: LOAD_STATUS.NOT_LOADED,
+    definitions: LOAD_STATUS.NOT_LOADED,
+    index: LOAD_STATUS.NOT_LOADED,
+};
+
+
+// --- 輔助函數 ---
+
+// 整合三個狀態更新函數為一個，負責更新狀態追蹤物件和 UI
+function updateIntegratedStatus(file, status) {
+    fileLoadState[file] = status;
+
+    let overallStatus = LOAD_STATUS.LOADING;
+    let statusMsg = "";
+
+    // 檢查整體狀態和生成訊息
+    const tablesOK = fileLoadState.tables === LOAD_STATUS.OK;
+    const defsOK = fileLoadState.definitions === LOAD_STATUS.OK;
+    const indexOK = fileLoadState.index === LOAD_STATUS.OK;
+    
+    if (fileLoadState.tables === LOAD_STATUS.ERROR || 
+        fileLoadState.definitions === LOAD_STATUS.ERROR || 
+        fileLoadState.index === LOAD_STATUS.ERROR) {
+        overallStatus = LOAD_STATUS.ERROR;
+        statusMsg = "數據載入失敗，請檢查檔案。";
+    } else if (tablesOK && defsOK && indexOK) {
+        overallStatus = LOAD_STATUS.OK;
+        // 顯示 Tables 的總數（Tables XML 載入時可以計算）
+        statusMsg = `所有數據載入完成（Tables: ${validMap.size} 組前綴, Index: ${indexEntries.length} 條）`;
+    } else if (fileLoadState.tables === LOAD_STATUS.LOADING || 
+               fileLoadState.definitions === LOAD_STATUS.LOADING || 
+               fileLoadState.index === LOAD_STATUS.LOADING) {
+        overallStatus = LOAD_STATUS.LOADING;
+        let loadingFiles = [];
+        if (fileLoadState.tables === LOAD_STATUS.LOADING) loadingFiles.push("Tables");
+        if (fileLoadState.definitions === LOAD_STATUS.LOADING) loadingFiles.push("Definitions");
+        if (fileLoadState.index === LOAD_STATUS.LOADING) loadingFiles.push("Index");
+        statusMsg = `數據載入中... (${loadingFiles.join(", ")})`;
+    } else {
+        overallStatus = LOAD_STATUS.NOT_LOADED;
+        statusMsg = "尚未載入數據。";
+    }
+
+    // 更新 UI
+    loadStatusText.textContent = statusMsg;
+    integratedLoadStatus.className = 'load-indicator ' + (overallStatus === LOAD_STATUS.OK ? 'ok' : overallStatus === LOAD_STATUS.ERROR ? 'error' : 'loading');
+
+    // 特殊處理 Definitions 的提示文字 (更新右側 badge 內的文字)
+    if (defsOK) {
+        defHintText.textContent = '滑鼠懸停顯示 Body Part/Device 定義';
+        defLoaded = true; // 確保 defLoaded 狀態正確更新
+    } else if (fileLoadState.definitions === LOAD_STATUS.ERROR) {
+        defHintText.textContent = '定義檔載入失敗';
+        defLoaded = false;
+    } else {
+        defHintText.textContent = '定義檔載入中...';
+        defLoaded = false;
+    }
+    
+    // 確保 Index 載入狀態也正確更新
+    if (indexOK) {
+        indexLoaded = true;
+        // Index 載入完成後啟用搜索框
+        indexSearchInput.disabled = false; 
+        indexSearchInput.placeholder = "輸入英文處置名稱（例：Appendectomy）";
+    } else {
+        indexLoaded = false;
+        indexSearchInput.disabled = true;
+        indexSearchInput.placeholder = "載入 Index 檔後，可輸入英文處置名稱（例：Appendectomy）";
+    }
+}
+
+
+function setResultInfo(text) {
+  resultInfo.textContent = text;
+}
+function resetTablePlaceholder(text) {
+  resultBody.innerHTML = `<tr><td class="no-result" colspan="4">${text}</td></tr>`;
+}
+function resetSelections() {
+  selections = {
+    bodypart: null,
+    approach: null,
+    device: null,
+    qualifier: null,
+  };
+  // 取消所有 radio button 的選取狀態
+  document.querySelectorAll('input[type="radio"]').forEach(r => {
+    r.checked = false;
+    r.disabled = false; // 重置時確保所有按鈕都啟用
+    r.parentElement.style.opacity = 1; // 重置時確保所有按鈕都可見
+  });
+
+  updateSelectedCode(); // 在重置選項時更新顯示
+}
+
+function resetSummaryHeader() {
+  summaryTitle.textContent = "選擇前 3 碼以查詢 PCS Table";
+  
+  sectionSelect.value = "";
+  bodySystemSelect.innerHTML = '<option value="">-- 請先選擇 Section --</option>';
+  operationSelect.innerHTML = '<option value="">-- 請先選擇 Body System --</option>';
+  bodySystemSelect.disabled = true;
+  operationSelect.disabled = true;
+
+  selectedCodeBox.textContent = "目前尚未選取完整 7 碼代碼。";
+}
+
+function escapeHtmlAttr(str) {
+  if (typeof str !== "string") return str;
+  return str.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function getDefinitionTooltip(kind, term) {
+  return definitionMaps[kind] ? definitionMaps[kind].get(term) : null;
+}
+
+function isValidCombination(c4, c5, c6, c7) {
+  if (!currentPrefix || !validMap.has(currentPrefix)) return false;
+  const combos = validMap.get(currentPrefix).combos;
+  const fullCode = currentPrefix + c4 + c5 + c6 + c7;
+  return combos.has(fullCode);
+}
+
+function debounce(func, delay) {
+  let timeoutId;
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+}
+
+// XML 解析的輔助函數 (不變)
+function getDirectAxisLabels(parent, axisPos) {
+  const axis = parent.querySelector(`axis[pos="${axisPos}"]`);
+  return axis ? Array.from(axis.getElementsByTagName("label")) : [];
+}
+
+// -------- Tables XML 解析 --------
+async function loadTables() {
+  updateIntegratedStatus('tables', LOAD_STATUS.LOADING);
+  // 禁用所有 Select 元素
+  sectionSelect.disabled = true;
+  bodySystemSelect.disabled = true;
+  operationSelect.disabled = true;
+  // 禁用清除按鈕
+  clearSelectionsBtn.disabled = true;
+
+
+  try {
+    const response = await fetch(TABLES_XML_URL);
+    if (!response.ok) throw new Error("文件找不到或伺服器錯誤");
+    const xmlText = await response.text();
+    parseIcd10PcsXml(xmlText);
+    updateIntegratedStatus('tables', LOAD_STATUS.OK);
+    // 載入完成後初始化 Select 選單
+    initSectionSelect();
+    isLoaded = true;
+  } catch (err) {
+    updateIntegratedStatus('tables', LOAD_STATUS.ERROR);
+    isLoaded = false;
+  }
+}
+
+function parseIcd10PcsXml(xmlText) {
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+  const parserError = xmlDoc.querySelector("parsererror");
+  if (parserError) {
+    throw new Error("Tables XML 格式解析失敗，請確認檔案是否正確。");
+  }
+  const tables = Array.from(xmlDoc.getElementsByTagName("pcsTable"));
+  if (!tables.length) {
+    throw new Error(
+      "Tables XML 中找不到 pcsTable 節點，可能不是正確的檔案。"
+    );
+  }
+  icdCodes = [];
+  icdCodeMap.clear();
+  validMap.clear();
+
+  // 清除並初始化 Section/Body System/Operation 選項
+  sectionOptions.clear();
+  bodySystemOptions.clear();
+  operationOptions.clear();
+
+  tables.forEach((table) => {
+    // 1. 取得前三碼的資訊
+    const s = table.querySelector('axis[pos="1"] label');
+    const bs = table.querySelector('axis[pos="2"] label');
+    const op = table.querySelector('axis[pos="3"] label');
+
+    if (!s || !bs || !op) return; // 略過不完整的 Table
+
+    const sCode = (s.getAttribute("code") || "").toUpperCase();
+    const sText = s.textContent.trim();
+    if (sCode) sectionOptions.set(sCode, sText);
+
+    const bsCode = (bs.getAttribute("code") || "").toUpperCase();
+    const bsText = bs.textContent.trim();
+    // 儲存 Body System 選項，並紀錄它屬於哪個 Section
+    if (bsCode) {
+      if (!bodySystemOptions.has(sCode)) bodySystemOptions.set(sCode, new Map());
+      bodySystemOptions.get(sCode).set(bsCode, bsText);
+    }
+
+    const opCode = (op.getAttribute("code") || "").toUpperCase();
+    const opText = op.textContent.trim();
+    // 儲存 Operation 選項，並紀錄它屬於哪個 Body System
+    if (opCode) {
+      const prefix2 = sCode + bsCode;
+      if (!operationOptions.has(prefix2))
+        operationOptions.set(prefix2, new Map());
+      operationOptions.get(prefix2).set(opCode, opText);
+    }
+
+    const prefix = sCode + bsCode + opCode;
+    if (prefix.length !== 3) return;
+
+    // 2. 取得 4-7 碼的選項和所有組合
+    const pcsRows = Array.from(table.getElementsByTagName("pcsRow"));
+
+    // 初始化 validMap
+    if (!validMap.has(prefix)) {
+      validMap.set(prefix, {
+        body: new Map(),
+        approach: new Map(),
+        device: new Map(),
+        qualifier: new Map(),
+        combos: new Set(),
+        header: [sText, bsText, opText],
+      });
+    }
+
+    const vm = validMap.get(prefix);
+
+    pcsRows.forEach((row) => {
+      const bpLabels = getDirectAxisLabels(row, 4);
+      const apLabels = getDirectAxisLabels(row, 5);
+      const dvLabels = getDirectAxisLabels(row, 6);
+      const qLabels = getDirectAxisLabels(row, 7);
+
+      bpLabels.forEach((bp) => {
+        const bpCode = (bp.getAttribute("code") || "").toUpperCase();
+        const bpText = bp.textContent.trim();
+        if (bpCode) vm.body.set(bpCode, bpText);
+
+        apLabels.forEach((ap) => {
+          const apCode = (ap.getAttribute("code") || "").toUpperCase();
+          const apText = ap.textContent.trim();
+          if (apCode) vm.approach.set(apCode, apText);
+
+          dvLabels.forEach((dv) => {
+            const dvCode = (dv.getAttribute("code") || "").toUpperCase();
+            const dvText = dv.textContent.trim();
+            if (dvCode) vm.device.set(dvCode, dvText);
+
+            qLabels.forEach((q) => {
+              const qCode = (q.getAttribute("code") || "").toUpperCase();
+              const qText = q.textContent.trim();
+              if (qCode) vm.qualifier.set(qCode, qText);
+
+              // 儲存完整的 7 碼代碼組合
+              const fullCode = prefix + bpCode + apCode + dvCode + qCode;
+              vm.combos.add(fullCode);
+
+              // 儲存完整的代碼描述
+              const desc = `${sText} / ${bsText} / ${opText} / ${bpText} / ${apText} / ${dvText} / ${qText}`;
+              icdCodes.push({ code: fullCode, desc: desc });
+              icdCodeMap.set(fullCode, desc);
+            });
+          });
+        });
+      });
+    });
+  });
+}
+
+// -------- 載入完成後初始化 Section Select --------
+function initSectionSelect() {
+  sectionSelect.innerHTML = '<option value="">-- Section --</option>'; // 調整提示文字
+  // 將 Map 轉換為陣列並排序
+  const sortedSections = Array.from(sectionOptions.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+  sortedSections.forEach(([code, text]) => {
+    const option = document.createElement('option');
+    option.value = code;
+    option.textContent = `${code} - ${text}`;
+    sectionSelect.appendChild(option);
+  });
+  sectionSelect.disabled = false;
+}
+
+// -------- Section 選擇 Body System --------
+function updateBodySystemSelect(sectionCode) {
+  bodySystemSelect.innerHTML = '<option value="">-- Body System --</option>';
+  if (sectionCode && bodySystemOptions.has(sectionCode)) {
+    const optionsMap = bodySystemOptions.get(sectionCode);
+    // 將 Map 轉換為陣列並排序
+    const sortedOptions = Array.from(optionsMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    sortedOptions.forEach(([code, text]) => {
+      const option = document.createElement('option');
+      option.value = code;
+      option.textContent = `${code} - ${text}`;
+      bodySystemSelect.appendChild(option);
+    });
+    bodySystemSelect.disabled = false;
+  } else {
+    bodySystemSelect.disabled = true;
+  }
+  operationSelect.innerHTML = '<option value="">-- 請先選擇 Body System --</option>';
+  operationSelect.disabled = true;
+  // 每次更新都觸發一次查詢，以清除結果或顯示新結果
+  doSearch();
+}
+
+// -------- Body System 選擇 Operation --------
+function updateOperationSelect(sectionCode, bodySystemCode) {
+  operationSelect.innerHTML = '<option value="">-- Operation --</option>';
+  const prefix2 = sectionCode + bodySystemCode;
+  if (prefix2.length === 2 && operationOptions.has(prefix2)) {
+    const optionsMap = operationOptions.get(prefix2);
+    // 將 Map 轉換為陣列並排序
+    const sortedOptions = Array.from(optionsMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    sortedOptions.forEach(([code, text]) => {
+      const option = document.createElement('option');
+      option.value = code;
+      option.textContent = `${code} - ${text}`;
+      operationSelect.appendChild(option);
+    });
+    operationSelect.disabled = false;
+  } else {
+    operationSelect.disabled = true;
+  }
+  // 每次更新都觸發一次查詢，以清除結果或顯示新結果
+  doSearch();
+}
+
+// -------- Definitions XML 解析 (不變) --------
+async function loadDefinitions() {
+  updateIntegratedStatus('definitions', LOAD_STATUS.LOADING);
+  try {
+    const response = await fetch(DEFINITIONS_XML_URL);
+    if (!response.ok) throw new Error("文件找不到或伺服器錯誤");
+    const xmlText = await response.text();
+    parseIcd10PcsDefinitions(xmlText);
+    updateIntegratedStatus('definitions', LOAD_STATUS.OK);
+  } catch (err) {
+    updateIntegratedStatus('definitions', LOAD_STATUS.ERROR);
+  }
+}
+
+function parseIcd10PcsDefinitions(xmlText) {
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+  const parserError = xmlDoc.querySelector("parsererror");
+  if (parserError) {
+    throw new Error("Definitions XML 格式解析失敗。");
+  }
+  ["bodypart", "device"].forEach((kind) => {
+    const definitions = Array.from(xmlDoc.getElementsByTagName(kind));
+    definitions.forEach((def) => {
+      const termsNodes = Array.from(def.getElementsByTagName("terms"));
+      termsNodes.forEach((terms) => {
+        const titleNodes = Array.from(
+          terms.getElementsByTagName("title")
+        );
+        const defNode = terms.getElementsByTagName("definition")[0];
+        const explNode = terms.getElementsByTagName("explanation")[0];
+        const includeNodes = Array.from(
+          terms.getElementsByTagName("includes")
+        );
+
+        const lines = [];
+        if (defNode) {
+          lines.push(`定義: ${defNode.textContent.trim()}`);
+        }
+        if (explNode) {
+          lines.push(`解釋: ${explNode.textContent.trim()}`);
+        }
+        if (includeNodes.length) {
+          lines.push(
+            `包含: ${includeNodes
+              .map((n) => n.textContent.trim())
+              .join(", ")}`
+          );
+        }
+
+        if (lines.length) {
+          titleNodes.forEach((titleNode) => {
+            const title = titleNode.textContent.trim();
+            if (title) {
+              definitionMaps[kind].set(
+                title.toUpperCase(),
+                lines.join("\n")
+              );
+            }
+          });
+        }
+      });
+    });
+  });
+}
+
+// -------- Index XML 解析 (不變) --------
+async function loadIndex() {
+  updateIntegratedStatus('index', LOAD_STATUS.LOADING);
+  try {
+    const response = await fetch(INDEX_XML_URL);
+    if (!response.ok) throw new Error("文件找不到或伺服器錯誤");
+    const xmlText = await response.text();
+    indexEntries = parseIcd10PcsIndex(xmlText);
+    updateIntegratedStatus('index', LOAD_STATUS.OK);
+  } catch (err) {
+    updateIntegratedStatus('index', LOAD_STATUS.ERROR);
+  }
+}
+
+function getDirectTitle(node) {
+  const titleNode = node.querySelector("title");
+  return titleNode ? titleNode.textContent.trim() : "";
+}
+
+function traverseIndexNode(node, currentPath, entries) {
+  const title = getDirectTitle(node);
+  const nextPath = [...currentPath, title];
+  
+  const codeNode = node.querySelector("code");
+  const code = codeNode ? codeNode.textContent.trim() : null;
+
+  if (code) {
+    entries.push({
+      path: nextPath.join(" — "),
+      codes: [code],
+    });
+  }
+
+  // 處理所有的 subTerm，包含在 current node 內的
+  const subTerms = Array.from(node.children).filter(child => child.tagName === 'subTerm');
+  
+  subTerms.forEach((st) => {
+    traverseIndexNode(st, nextPath, entries);
+  });
+}
+
+
+function parseIcd10PcsIndex(xmlText) {
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+  const parserError = xmlDoc.querySelector("parsererror");
+  if (parserError) {
+    throw new Error("Index XML 格式解析失敗，請確認檔案是否正確。");
+  }
+
+  const entries = [];
+  const letters = Array.from(xmlDoc.getElementsByTagName("letter"));
+
+  letters.forEach((letter) => {
+    const mainTerms = Array.from(letter.getElementsByTagName("mainTerm"));
+    mainTerms.forEach((mt) => {
+      traverseIndexNode(mt, [], entries);
+    });
+  });
+
+  return entries;
+}
+
+// -------- 輔助函數：獲取單一字元描述 --------
+function getCharDescription(charIndex, charCode, currentCodePrefix) {
+  if (!charCode) return null;
+  const char = charCode.toUpperCase();
+
+  switch (charIndex) {
+    case 1: // Section (第 1 碼)
+      return sectionOptions.get(char);
+    case 2: // Body System (第 2 碼)
+      return bodySystemOptions.get(currentCodePrefix).get(char);
+    case 3: // Operation (第 3 碼)
+      return operationOptions.get(currentCodePrefix).get(char);
+    case 4: // Body Part (第 4 碼)
+      if (currentPrefix.length === 3 && validMap.has(currentPrefix)) {
+        return validMap.get(currentPrefix).body.get(char);
       }
-      return response.text();
-    })
-    .then((text) => {
-      const codes = parseIcd10PcsXml(text);
-      icdCodes = codes;
-      icdCodeMap = new Map();
-      codes.forEach((c) => icdCodeMap.set(c.code, c.desc));
-      buildValidMap(); // 建立合法組合表
-      isLoaded = true;
-      searchInput.disabled = false;
-      setLoadStatus(
-        `Tables 載入完成，共 ${codes.length.toLocaleString()} 筆代碼。`,
-        "ok"
-      );
-      resetTablePlaceholder("請在上方輸入前 3 碼。");
-    })
-    .catch((err) => {
-      console.error(err);
-      setLoadStatus("Tables 載入失敗：" + err.message, "error");
+      return null;
+    case 5: // Approach (第 5 碼)
+      if (currentPrefix.length === 3 && validMap.has(currentPrefix)) {
+        return validMap.get(currentPrefix).approach.get(char);
+      }
+      return null;
+    case 6: // Device (第 6 碼)
+      if (currentPrefix.length === 3 && validMap.has(currentPrefix)) {
+        return validMap.get(currentPrefix).device.get(char);
+      }
+      return null;
+    case 7: // Qualifier (第 7 碼)
+      if (currentPrefix.length === 3 && validMap.has(currentPrefix)) {
+        return validMap.get(currentPrefix).qualifier.get(char);
+      }
+      return null;
+    default:
+      return null;
+  }
+}
+
+// -------- 更新已選代碼的顯示 (第 1-7 碼) --------
+function updateSelectedCode() {
+  const codes = [
+    sectionSelect.value,
+    bodySystemSelect.value,
+    operationSelect.value,
+    selections.bodypart,
+    selections.approach,
+    selections.device,
+    selections.qualifier
+  ].map(c => c ? c.toUpperCase() : ''); // 確保為大寫或空字串
+
+  let partialCode = '';
+  let descriptionParts = [];
+  let isComplete = true;
+
+  // 1. 構建部分代碼和描述
+  for (let i = 0; i < 7; i++) {
+    const charCode = codes[i];
+    const charIndex = i + 1; // 1-based index (1-7)
+    const currentCodePrefix = partialCode;
+    
+    if (charCode && charCode.length === 1) {
+      // 檢查前三碼是否已選齊，如果未選齊，則不能繼續查找後續字元描述
+      if (charIndex > 3 && currentPrefix.length !== 3) {
+          isComplete = false;
+          partialCode += '_'.repeat(7 - partialCode.length);
+          break;
+      }
+      partialCode += charCode;
+      
+      // 嘗試獲取描述
+      const desc = getCharDescription(charIndex, charCode, currentCodePrefix);
+      
+      // 只有當描述確實存在時才加入
+      if (desc) {
+        // 只收集第 3 碼到第 7 碼的描述
+        if (charIndex >= 3) {
+            descriptionParts.push(desc);
+        }
+      } else {
+        isComplete = false;
+        partialCode += '_'.repeat(7 - partialCode.length);
+        break;
+      }
+    } else {
+      // 遇到第一個未選取的字元
+      partialCode += '_'.repeat(7 - partialCode.length);
+      isComplete = false;
+      break;
+    }
+  }
+
+  // 2. 準備顯示內容
+  let displayCode = `<code style="font-size: 1.3rem !important;">${partialCode}</code>`;
+  let displayDescription = descriptionParts.join(', ');
+  
+  const selectedCount = partialCode.replace(/_/g, '').length;
+
+  if (selectedCount === 0) {
+    selectedCodeBox.textContent = "目前尚未選取完整 7 碼代碼。";
+    // 如果沒有選取任何代碼，則禁用清除按鈕
+    if (isLoaded && currentPrefix.length === 3) {
+      // 只有在載入且有前綴時，才讓它保持啟用，因為 doSearch 會處理
+    } else {
+        clearSelectionsBtn.disabled = true;
+    }
+  } else if (isComplete && currentPrefix.length === 3) {
+    // 檢查組合是否合法
+    const fullCode = partialCode;
+    const isValid = isValidCombination(codes[3], codes[4], codes[5], codes[6]);
+
+    if (isValid) {
+      selectedCodeBox.innerHTML = `
+        <div style="font-weight: 600; margin-bottom: 4px;">已完成代碼：${displayCode}</div>
+        <div style="font-size: 0.8rem; color: #4b5563;">${displayDescription}</div>
+      `;
+      clearSelectionsBtn.disabled = false;
+    } else {
+      selectedCodeBox.innerHTML = `
+        <div style="font-weight: 600; color: #dc2626; margin-bottom: 4px;">錯誤代碼：${displayCode}</div>
+        <div style="font-size: 0.8rem; color: #dc2626;">此 7 碼組合不合法。請調整 4-7 碼選項。</div>
+      `;
+      clearSelectionsBtn.disabled = false;
+    }
+  } else {
+    // 部分代碼
+    selectedCodeBox.innerHTML = `
+      <div style="font-weight: 600; margin-bottom: 4px;">部分代碼：${displayCode}</div>
+      <div style="font-size: 0.8rem; color: #9ca3af;">尚未完成 7 碼選擇。${descriptionParts.length > 0 ? `目前：${displayDescription}` : ''}</div>
+    `;
+    // 只要有選取 4-7 碼的任何一碼，就啟用清除按鈕
+    if (selections.bodypart || selections.approach || selections.device || selections.qualifier) {
+        clearSelectionsBtn.disabled = false;
+    } else {
+        clearSelectionsBtn.disabled = true;
+    }
+  }
+}
+
+// -------- 渲染表格 (第 4-7 碼) --------
+function renderAxisTable(matched, prefix, totalMatched) {
+  if (!totalMatched) {
+    if (!prefix) {
+      resetTablePlaceholder("請在上方選擇 PCS 前 3 碼。");
+      setResultInfo("請選擇查詢條件。");
+      resetSummaryHeader();
+      resetSelections();
+      clearSelectionsBtn.disabled = true; // <-- 新增: 沒有前綴時禁用清除按鈕
+      return;
+    }
+    if (!matched.length) {
+      resetTablePlaceholder("此前 3 碼沒有對應的組合。");
+      setResultInfo(`「${prefix}」查無結果。`);
+      // 查無結果時，只更新 Title 和 Selected Code，Select 保持原選值
+      summaryTitle.innerHTML = `<span class="highlight-code-prefix">${prefix}</span> - 查無結果`;
+      selectedCodeBox.textContent = "目前代碼查無結果。";
+      resetSelections();
+      clearSelectionsBtn.disabled = true; // <-- 新增: 查無結果時禁用清除按鈕
+      return;
+    }
+  }
+  
+  // 1. 提取所有可能的 4-7 碼選項
+  const bodyParts = new Map();
+  const approaches = new Map();
+  const devices = new Map();
+  const qualifiers = new Map();
+  let headerInfo = null;
+
+  matched.forEach((item) => {
+    const code = item.code || "";
+    const parts = (item.desc || "").split(" / ");
+    
+    if (!headerInfo && parts.length >= 3) {
+      headerInfo = {
+        secCode: code[0],
+        secText: parts[0] || "",
+        bsCode: code[1],
+        bsText: parts[1] || "",
+        opCode: code[2],
+        opText: parts[2] || "",
+      };
+    }
+    
+    const c4 = code[3];
+    const c5 = code[4];
+    const c6 = code[5];
+    const c7 = code[6];
+    
+    const bpText = parts[3] || "";
+    const apText = parts[4] || "";
+    const dvText = parts[5] || "";
+    const qText = parts[6] || "";
+
+    if (c4) bodyParts.set(c4, bpText);
+    if (c5) approaches.set(c5, apText);
+    if (c6) devices.set(c6, dvText);
+    if (c7) qualifiers.set(c7, qText);
+  });
+  
+  // 2. 排序選項並生成 HTML
+  const getSortedArray = (map) => Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+
+  const bpArr = getSortedArray(bodyParts);
+  const apArr = getSortedArray(approaches);
+  const dvArr = getSortedArray(devices);
+  const qArr = getSortedArray(qualifiers);
+
+  const maxRows = Math.max(
+    bpArr.length,
+    apArr.length,
+    dvArr.length,
+    qArr.length
+  );
+  
+  let bodyHtml = "";
+  
+  for (let i = 0; i < maxRows; i++) {
+    const [bpCode, bpText] = bpArr[i] || ["", ""];
+    const [apCode, apText] = apArr[i] || ["", ""];
+    const [dvCode, dvText] = dvArr[i] || ["", ""];
+    const [qCode, qText] = qArr[i] || ["", ""];
+
+    // 獲取定義，用於 tooltip
+    const bpDef = defLoaded && bpCode ? getDefinitionTooltip("bodypart", bpText) : "";
+    const dvDef = defLoaded && dvCode ? getDefinitionTooltip("device", dvText) : "";
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td> ${bpCode ? `
+        <label class="option-row">
+          <input type="radio" name="bodypart" value="${bpCode}">
+          <span class="option-code">${bpCode}</span> 
+          <span ${bpDef ? `title="${escapeHtmlAttr(bpDef)}"` : ""}>${bpText}</span>
+        </label>
+        ` : ""} </td>
+      <td> ${apCode ? `
+        <label class="option-row">
+          <input type="radio" name="approach" value="${apCode}">
+          <span class="option-code">${apCode}</span> 
+          <span>${apText}</span>
+        </label>
+        ` : ""} </td>
+      <td> ${dvCode ? `
+        <label class="option-row">
+          <input type="radio" name="device" value="${dvCode}">
+          <span class="option-code">${dvCode}</span> 
+          <span ${dvDef ? `title="${escapeHtmlAttr(dvDef)}"` : ""}>${dvText}</span>
+        </label>
+        ` : ""} </td>
+      <td> ${qCode ? `
+        <label class="option-row">
+          <input type="radio" name="qualifier" value="${qCode}">
+          <span class="option-code">${qCode}</span> 
+          <span>${qText}</span>
+        </label>
+        ` : ""} </td>
+    `;
+    bodyHtml += tr.outerHTML;
+  }
+  
+  resultBody.innerHTML = bodyHtml;
+
+  // 移除用戶要求移除的狀態訊息
+  setResultInfo(
+    `目前顯示 ${totalMatched} 條完整 7 碼代碼，共 ${matched.length} 種組合。`
+  );
+
+  // 更新 Summary 標頭
+  if (headerInfo) {
+    summaryTitle.innerHTML = `<span class="highlight-code-prefix">${headerInfo.secCode}${headerInfo.bsCode}${headerInfo.opCode}</span> - ${headerInfo.opText}`;
+  }
+  
+  clearSelectionsBtn.disabled = false; // <-- 新增: 成功渲染表格後啟用清除按鈕
+}
+
+// -------- 應用最可能組合並過濾 (不變) --------
+function applyMostLikelyAndFilter() {
+  if (!currentPrefix || !validMap.has(currentPrefix)) return;
+  
+  const vm = validMap.get(currentPrefix);
+  const selectedBodypart = selections.bodypart;
+  const selectedApproach = selections.approach;
+  const selectedDevice = selections.device;
+  const selectedQualifier = selections.qualifier;
+
+  // 1. 確定所有候選列表（只考慮當前前綴下的合法選項）
+  const bodypartCandidates = selectedBodypart ? [selectedBodypart] : Array.from(vm.body.keys());
+  const approachCandidates = selectedApproach ? [selectedApproach] : Array.from(vm.approach.keys());
+  const deviceCandidates = selectedDevice ? [selectedDevice] : Array.from(vm.device.keys());
+  const qualCandidates = selectedQualifier ? [selectedQualifier] : Array.from(vm.qualifier.keys());
+
+  // 2. 過濾表格中不合法的組合 (禁用 radio buttons)
+
+  // Body Part (第 4 碼)
+  document.querySelectorAll('input[name="bodypart"]').forEach((r) => {
+    const c4 = r.value;
+    if (selectedBodypart && c4 !== selectedBodypart) return; // 如果已選，只檢查已選中的
+
+    let ok = false;
+    if (r.checked) ok = true; // 已選中的永遠合法 (除非其他已選項目造成衝突，但這會在後續步驟處理)
+    
+    if (!r.checked) {
+      outer: for (let c5 of approachCandidates) {
+        for (let c6 of deviceCandidates) {
+          for (let c7 of qualCandidates) {
+            if (isValidCombination(c4, c5, c6, c7)) {
+              ok = true;
+              break outer;
+            }
+          }
+        }
+      }
+    }
+    
+    // 檢查已選項目是否存在衝突 (只有當 c4 被選中時才需檢查)
+    if (r.checked) {
+      let currentOk = false;
+      outer: for (let c5 of selectedApproach ? [selectedApproach] : approachCandidates) {
+        for (let c6 of selectedDevice ? [selectedDevice] : deviceCandidates) {
+          for (let c7 of selectedQualifier ? [selectedQualifier] : qualCandidates) {
+            if (isValidCombination(c4, c5, c6, c7)) {
+              currentOk = true;
+              break outer;
+            }
+          }
+        }
+      }
+      if (!currentOk) {
+        ok = false;
+      }
+    }
+
+    r.disabled = !ok;
+    r.parentElement.style.opacity = ok ? 1 : 0.35;
+    if (!ok && r.checked) {
+      r.checked = false;
+      selections.bodypart = null;
+    }
+  });
+
+  // Approach (第 5 碼)
+  document.querySelectorAll('input[name="approach"]').forEach((r) => {
+    const c5 = r.value;
+    if (selectedApproach && c5 !== selectedApproach) return;
+
+    let ok = false;
+    if (r.checked) ok = true;
+
+    if (!r.checked) {
+      outer: for (let c4 of bodypartCandidates) {
+        for (let c6 of deviceCandidates) {
+          for (let c7 of qualCandidates) {
+            if (isValidCombination(c4, c5, c6, c7)) {
+              ok = true;
+              break outer;
+            }
+          }
+        }
+      }
+    }
+
+    // 檢查已選項目是否存在衝突
+    if (r.checked) {
+      let currentOk = false;
+      outer: for (let c4 of selectedBodypart ? [selectedBodypart] : bodypartCandidates) {
+        for (let c6 of selectedDevice ? [selectedDevice] : deviceCandidates) {
+          for (let c7 of selectedQualifier ? [selectedQualifier] : qualCandidates) {
+            if (isValidCombination(c4, c5, c6, c7)) {
+              currentOk = true;
+              break outer;
+            }
+          }
+        }
+      }
+      if (!currentOk) {
+        ok = false;
+      }
+    }
+
+    r.disabled = !ok;
+    r.parentElement.style.opacity = ok ? 1 : 0.35;
+    if (!ok && r.checked) {
+      r.checked = false;
+      selections.approach = null;
+    }
+  });
+
+  // Device (第 6 碼)
+  document.querySelectorAll('input[name="device"]').forEach((r) => {
+    const c6 = r.value;
+    if (selectedDevice && c6 !== selectedDevice) return;
+
+    let ok = false;
+    if (r.checked) ok = true;
+
+    if (!r.checked) {
+      outer: for (let c4 of bodypartCandidates) {
+        for (let c5 of approachCandidates) {
+          for (let c7 of qualCandidates) {
+            if (isValidCombination(c4, c5, c6, c7)) {
+              ok = true;
+              break outer;
+            }
+          }
+        }
+      }
+    }
+
+    // 檢查已選項目是否存在衝突
+    if (r.checked) {
+      let currentOk = false;
+      outer: for (let c4 of selectedBodypart ? [selectedBodypart] : bodypartCandidates) {
+        for (let c5 of selectedApproach ? [selectedApproach] : approachCandidates) {
+          for (let c7 of selectedQualifier ? [selectedQualifier] : qualCandidates) {
+            if (isValidCombination(c4, c5, c6, c7)) {
+              currentOk = true;
+              break outer;
+            }
+          }
+        }
+      }
+      if (!currentOk) {
+        ok = false;
+      }
+    }
+
+    r.disabled = !ok;
+    r.parentElement.style.opacity = ok ? 1 : 0.35;
+    if (!ok && r.checked) {
+      r.checked = false;
+      selections.device = null;
+    }
+  });
+
+  // Qualifier (第 7 碼)
+  document.querySelectorAll('input[name="qualifier"]').forEach((r) => {
+    const c7 = r.value;
+    if (selectedQualifier && c7 !== selectedQualifier) return;
+
+    let ok = false;
+    if (r.checked) ok = true;
+
+    if (!r.checked) {
+      outer: for (let c4 of bodypartCandidates) {
+        for (let c5 of approachCandidates) {
+          for (let c6 of deviceCandidates) {
+            if (isValidCombination(c4, c5, c6, c7)) {
+              ok = true;
+              break outer;
+            }
+          }
+        }
+      }
+    }
+
+    // 檢查已選項目是否存在衝突
+    if (r.checked) {
+      let currentOk = false;
+      outer: for (let c4 of selectedBodypart ? [selectedBodypart] : bodypartCandidates) {
+        for (let c5 of selectedApproach ? [selectedApproach] : approachCandidates) {
+          for (let c6 of selectedDevice ? [selectedDevice] : deviceCandidates) {
+            if (isValidCombination(c4, c5, c6, c7)) {
+              currentOk = true;
+              break outer;
+            }
+          }
+        }
+      }
+      if (!currentOk) {
+        ok = false;
+      }
+    }
+
+    r.disabled = !ok;
+    r.parentElement.style.opacity = ok ? 1 : 0.35;
+    if (!ok && r.checked) {
+      r.checked = false;
+      selections.qualifier = null;
+    }
+  });
+
+  // 3. 重新計算代碼顯示 (因為可能有選項被清空)
+  updateSelectedCode();
+}
+
+// -------- 查詢主函數 (已修改) --------
+function doSearch() {
+  if (!isLoaded) {
+    resetTablePlaceholder("Tables XML 尚未載入。");
+    setResultInfo("請等待 Tables 檔載入完成。");
+    resetSummaryHeader();
+    currentPrefix = "";
+    clearSelectionsBtn.disabled = true; // <-- 禁用清除按鈕
+    return;
+  }
+
+  // 從 Summary 區塊內的三個 Select 元素中獲取前三碼
+  const sCode = sectionSelect.value.trim().toUpperCase();
+  const bsCode = bodySystemSelect.value.trim().toUpperCase();
+  const opCode = operationSelect.value.trim().toUpperCase();
+  const prefix = sCode + bsCode + opCode;
+
+  if (prefix.length !== 3) {
+    resetTablePlaceholder("請先完整選擇 Section、Body System 和 Operation (共 3 碼)。");
+    setResultInfo("請選擇前 3 碼。");
+    currentPrefix = "";
+    clearSelectionsBtn.disabled = true; // <-- 禁用清除按鈕
+    // 即使沒有 3 碼，也更新 partial code 顯示
+    updateSelectedCode();
+    return;
+  }
+  
+  // 檢查前綴是否真的改變，如果沒有變動則不需要重置選項
+  const prefixChanged = currentPrefix !== prefix;
+  currentPrefix = prefix;
+
+  const vm = validMap.get(prefix);
+
+  if (!vm) {
+    renderAxisTable([], prefix, 0); // 查無結果
+    resetSelections();
+    clearSelectionsBtn.disabled = true; // <-- 禁用清除按鈕
+    return;
+  }
+
+  // 如果前 3 碼有變化，則清空 4-7 碼的選擇
+  if (prefixChanged) {
+    resetSelections();
+  }
+
+  // 根據前三碼找到所有完整的 7 碼代碼
+  const totalMatched = vm.combos.size;
+  
+  // 構造一個列表，包含該前三碼下所有可能的 [section/bs/op/bp/ap/dv/q] 組合
+  const matched = Array.from(vm.combos).map((code) => ({
+    code: code,
+    desc: icdCodeMap.get(code),
+  }));
+
+  // 渲染表格
+  renderAxisTable(matched, prefix, totalMatched);
+  
+  // 第一次載入時，嘗試應用最可能組合並過濾
+  applyMostLikelyAndFilter();
+
+  clearSelectionsBtn.disabled = false; // <-- 啟用清除按鈕
+}
+
+const debouncedSearch = debounce(doSearch, 100);
+
+// -------- 處理 Index 點擊，選取參數代碼並選取下拉選單
+function selectPrefixFromUrl(prefix) {
+  if (prefix.length === 3) {
+    const sCode = prefix[0];
+    const bsCode = prefix[1];
+    const opCode = prefix[2];
+
+    // 1. 選取 Section
+    if (Array.from(sectionOptions.keys()).includes(sCode)) {
+      sectionSelect.value = sCode;
+      updateBodySystemSelect(sCode); // 載入 Body System 選項
+
+      // 2. 選取 Body System
+      // 使用 setTimeout 確保 updateBodySystemSelect 完成渲染
+      setTimeout(() => {
+        const isBsValid = bodySystemOptions.has(sCode) && Array.from(bodySystemOptions.get(sCode).keys()).includes(bsCode);
+        if (isBsValid) {
+          bodySystemSelect.value = bsCode;
+          updateOperationSelect(sCode, bsCode); // 載入 Operation 選項
+          
+          // 3. 選取 Operation
+          setTimeout(() => {
+            const isOpValid = operationOptions.has(sCode + bsCode) && Array.from(operationOptions.get(sCode + bsCode).keys()).includes(opCode);
+            if (isOpValid) {
+              operationSelect.value = opCode;
+              // 4. 執行查詢
+              doSearch();
+            }
+          }, 50); // 稍微延遲以確保 DOM 更新
+        }
+      }, 50);
+    }
+  }
+}
+
+// -------- 事件監聽 --------
+
+// [新增] 監聽直接輸入前三碼的功能
+if (prefixInput && searchPrefixBtn && prefixError) {
+    // 監聽輸入框的變動 (實時檢查輸入長度和內容)
+    prefixInput.addEventListener('input', () => {
+        const value = prefixInput.value.toUpperCase().trim();
+        prefixInput.value = value; // 轉大寫回填
+        // 檢查是否為三位英數字
+        const isValid = value.length === 3 && /^[0-9A-Z]{3}$/.test(value);
+        
+        // 控制按鈕啟用狀態和錯誤訊息
+        searchPrefixBtn.disabled = !isValid;
+        prefixError.style.display = isValid || value.length === 0 ? 'none' : 'block';
+    });
+
+    // 監聽「查詢」按鈕點擊事件
+    searchPrefixBtn.addEventListener('click', () => {
+        if (searchPrefixBtn.disabled) return;
+        const prefix = prefixInput.value.toUpperCase().trim();
+        // 呼叫現有的選擇前三碼的函數
+        selectPrefixFromUrl(prefix); 
+    });
+
+    // 監聽輸入框的 Enter 鍵
+    prefixInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !searchPrefixBtn.disabled) {
+            searchPrefixBtn.click(); // 模擬點擊查詢按鈕
+            e.preventDefault(); // 避免表單或其他預設行為
+        }
     });
 }
 
-// 自動載入 Definitions
-function loadDefinitions() {
-  setDefStatus("正在載入 Definitions 檔案...", "loading");
-  fetch(DEFINITIONS_URL)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("無法載入 Definitions 檔案");
-      }
-      return response.text();
-    })
-    .then((text) => {
-      parseDefinitionsXml(text);
-      defLoaded = true;
-      setDefStatus("Definitions 載入完成。", "ok");
-    })
-    .catch((err) => {
-      console.error(err);
-      setDefStatus("Definitions 載入失敗：" + err.message, "error");
-    });
-}
 
-// 自動載入 Index
-function loadIndex() {
-  setIndexStatus("正在載入 Index 檔案...", "loading");
-  fetch(INDEX_URL)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("無法載入 Index 檔案");
-      }
-      return response.text();
-    })
-    .then((text) => {
-      const entries = parseIndexXml(text);
-      indexEntries = entries;
-      indexLoaded = true;
-      indexSearchInput.disabled = false;
-      setIndexStatus(
-        `Index 載入完成，共 ${entries.length.toLocaleString()} 筆項目。`,
-        "ok"
-      );
-    })
-    .catch((err) => {
-      console.error(err);
-      setIndexStatus("Index 載入失敗：" + err.message, "error");
-    });
-}
-
-// 頁面載入時自動執行
-document.addEventListener("DOMContentLoaded", () => {
-  loadTables();
-  loadDefinitions();
-  loadIndex();
+// 從 Summary 區塊的 Select 元素變動時觸發查詢
+sectionSelect.addEventListener("change", (e) => {
+  updateBodySystemSelect(e.target.value.toUpperCase());
 });
 
-    const xmlFileInput = document.getElementById("xmlFile");
-    const defFileInput = document.getElementById("defFile");
-    const indexFileInput = document.getElementById("indexFile");
+bodySystemSelect.addEventListener("change", (e) => {
+  const sCode = sectionSelect.value.toUpperCase();
+  updateOperationSelect(sCode, e.target.value.toUpperCase());
+});
 
-    const loadStatus = document.getElementById("loadStatus");
-    const defStatus = document.getElementById("defStatus");
-    const indexStatus = document.getElementById("indexStatus");
+operationSelect.addEventListener("change", (e) => {
+  debouncedSearch();
+});
 
-    const searchInput = document.getElementById("searchInput");
-    const indexSearchInput = document.getElementById("indexSearchInput");
+// 處理 Index Search Input
+const debouncedIndexSearch = debounce(searchIndex, 300);
+indexSearchInput.addEventListener("input", debouncedIndexSearch);
 
-    const resultBody = document.getElementById("resultBody");
-    const resultInfo = document.getElementById("resultInfo");
-
-    const summaryTitle = document.getElementById("summaryTitle");
-    const summaryDetail = document.getElementById("summaryDetail");
-    const selectedCodeBox = document.getElementById("selectedCodeBox");
-
-    const indexResultBox = document.getElementById("indexResultBox");
-
-    // 7 碼完整代碼列表與 map
-    let icdCodes = [];          // [{code, desc}]
-    let icdCodeMap = new Map(); // code -> desc
-    let isLoaded = false;
-
-    // 新增：依前三碼建立合法組合 map
-    // validMap: prefix -> { body:Set, approach:Set, device:Set, qualifier:Set, combos:Set(完整7碼) }
-    let validMap = new Map();
-
-    // definitions（hover 提示）
-    const definitionMaps = {
-      bodypart: new Map(),
-      device: new Map(),
-    };
-    let defLoaded = false;
-
-    // Index：每筆 { path, codes[] }
-    let indexEntries = [];
-    let indexLoaded = false;
-
-    let currentPrefix = "";
-    let selections = {
-      bodypart: null,
-      approach: null,
-      device: null,
-      qualifier: null,
-    };
-
-    function setLoadStatus(text, cls) {
-      loadStatus.textContent = text;
-      loadStatus.className = cls || "";
-    }
-    function setDefStatus(text, cls) {
-      defStatus.textContent = text;
-      defStatus.className = cls || "";
-    }
-    function setIndexStatus(text, cls) {
-      indexStatus.textContent = text;
-      indexStatus.className = cls || "";
-    }
-    function setResultInfo(text) {
-      resultInfo.textContent = text;
-    }
-
-    function resetTablePlaceholder(message) {
-      resultBody.innerHTML =
-        '<tr><td class="no-result" colspan="4">' +
-        (message || "尚無資料。") +
-        "</td></tr>";
-    }
-
-    function resetSummaryHeader() {
-      summaryTitle.textContent = "尚未查詢";
-      summaryDetail.innerHTML = `
-        <div class="pcs-summary-row"><span><em>Section</em></span><span>—</span></div>
-        <div class="pcs-summary-row"><span><em>Body System</em></span><span>—</span></div>
-        <div class="pcs-summary-row"><span><em>Operation</em></span><span>—</span></div>
+function searchIndex() {
+  const query = indexSearchInput.value.trim();
+  
+  if (!query) {
+    indexResultBox.innerHTML = `
+      <div class="index-result-empty">
+        目前尚未載入 Index XML，或尚未輸入處置名稱。
+      </div>
+    `;
+    return;
+  }
+  
+  if (!indexLoaded) {
+      indexResultBox.innerHTML = `
+        <div class="index-result-empty error" style="color: #b91c1c;">
+          Index XML 尚未載入。
+        </div>
       `;
-    }
-
-    function resetSelections() {
-      selections = {
-        bodypart: null,
-        approach: null,
-        device: null,
-        qualifier: null,
-      };
-      // 清掉 radio 勾選
-      ["bodypart","approach","device","qualifier"].forEach(field => {
-        document
-          .querySelectorAll(`input[name="${field}"]`)
-          .forEach(r => { r.checked = false; r.disabled = false; r.parentElement.style.opacity = 1; });
-      });
-      updateSelectedCode();
-    }
-
-    function escapeHtmlAttr(str) {
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/"/g, "&quot;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-    }
-
-    function getDefinitionTooltip(kind, label) {
-      if (!defLoaded || !label) return "";
-      const map = definitionMaps[kind];
-      if (!map) return "";
-      const key = label.trim();
-      if (!map.has(key)) return "";
-      return map.get(key);
-    }
-
-    // 取得 axis pos 的 label
-    function getDirectAxisLabels(parent, pos) {
-      const labels = [];
-      Array.from(parent.children).forEach((child) => {
-        if (
-          child.tagName === "axis" &&
-          child.getAttribute("pos") === String(pos)
-        ) {
-          labels.push(...Array.from(child.getElementsByTagName("label")));
-        }
-      });
-      return labels;
-    }
-
-    // -------- Tables XML 解析 --------
-    function parseIcd10PcsXml(xmlText) {
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlText, "application/xml");
-      const parserError = xmlDoc.querySelector("parsererror");
-      if (parserError) {
-        throw new Error("Tables XML 格式解析失敗，請確認檔案是否正確。");
-      }
-
-      const tables = Array.from(xmlDoc.getElementsByTagName("pcsTable"));
-      if (!tables.length) {
-        throw new Error(
-          "Tables XML 中找不到 pcsTable 節點，可能不是正確的檔案。"
-        );
-      }
-
-      const codes = [];
-
-      tables.forEach((table) => {
-        const sectionLabels = getDirectAxisLabels(table, 1);
-        const bodySystemLabels = getDirectAxisLabels(table, 2);
-        const operationLabels = getDirectAxisLabels(table, 3);
-
-        if (
-          !sectionLabels.length ||
-          !bodySystemLabels.length ||
-          !operationLabels.length
-        ) {
-          return;
-        }
-
-        const rows = Array.from(table.getElementsByTagName("pcsRow"));
-        rows.forEach((row) => {
-          const bodyPartLabels = getDirectAxisLabels(row, 4);
-          const approachLabels = getDirectAxisLabels(row, 5);
-          const deviceLabels = getDirectAxisLabels(row, 6);
-          const qualifierLabels = getDirectAxisLabels(row, 7);
-
-          if (
-            !bodyPartLabels.length ||
-            !approachLabels.length ||
-            !deviceLabels.length ||
-            !qualifierLabels.length
-          ) {
-            return;
-          }
-
-          sectionLabels.forEach((sec) => {
-            const sCode = (sec.getAttribute("code") || "").toUpperCase();
-            const sText = sec.textContent.trim();
-            bodySystemLabels.forEach((bs) => {
-              const bsCode = (bs.getAttribute("code") || "").toUpperCase();
-              const bsText = bs.textContent.trim();
-              operationLabels.forEach((op) => {
-                const opCode = (op.getAttribute("code") || "").toUpperCase();
-                const opText = op.textContent.trim();
-
-                bodyPartLabels.forEach((bp) => {
-                  const bpCode = (bp.getAttribute("code") || "").toUpperCase();
-                  const bpText = bp.textContent.trim();
-                  approachLabels.forEach((ap) => {
-                    const apCode = (ap.getAttribute("code") || "").toUpperCase();
-                    const apText = ap.textContent.trim();
-                    deviceLabels.forEach((dv) => {
-                      const dvCode = (dv.getAttribute("code") || "").toUpperCase();
-                      const dvText = dv.textContent.trim();
-                      qualifierLabels.forEach((q) => {
-                        const qCode = (q.getAttribute("code") || "").toUpperCase();
-                        const qText = q.textContent.trim();
-
-                        const fullCode =
-                          sCode +
-                          bsCode +
-                          opCode +
-                          bpCode +
-                          apCode +
-                          dvCode +
-                          qCode;
-
-                        const descParts = [
-                          sText,
-                          bsText,
-                          opText,
-                          bpText,
-                          apText,
-                          dvText,
-                          qText,
-                        ].filter(Boolean);
-                        const description = descParts.join(" / ");
-
-                        codes.push({ code: fullCode, desc: description });
-                      });
-                    });
-                  });
-                });
-              });
-            });
-          });
-        });
-      });
-
-      return codes;
-    }
-
-    // 建立合法組合 map（validMap）
-    function buildValidMap() {
-      validMap.clear();
-      icdCodes.forEach(item => {
-        const code = item.code;
-        if (!code || code.length !== 7) return;
-        const prefix = code.slice(0,3);
-        const c4 = code[3];
-        const c5 = code[4];
-        const c6 = code[5];
-        const c7 = code[6];
-        if (!validMap.has(prefix)) {
-          validMap.set(prefix, {
-            body: new Set(),
-            approach: new Set(),
-            device: new Set(),
-            qualifier: new Set(),
-            combos: new Set(),
-          });
-        }
-        const m = validMap.get(prefix);
-        m.body.add(c4);
-        m.approach.add(c5);
-        m.device.add(c6);
-        m.qualifier.add(c7);
-        m.combos.add(code);
-      });
-    }
-
-    // -------- Definitions XML 解析 --------
-    function parseDefinitionsXml(xmlText) {
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlText, "application/xml");
-      const parserError = xmlDoc.querySelector("parsererror");
-      if (parserError) {
-        throw new Error(
-          "Definitions XML 格式解析失敗，請確認檔案是否正確。"
-        );
-      }
-
-      definitionMaps.bodypart.clear();
-      definitionMaps.device.clear();
-
-      const sections = Array.from(xmlDoc.getElementsByTagName("section"));
-      sections.forEach((sec) => {
-        const axes = Array.from(sec.getElementsByTagName("axis"));
-
-        axes.forEach((axis) => {
-          const pos = axis.getAttribute("pos");
-          let kind = null;
-          if (pos === "4") kind = "bodypart";
-          else if (pos === "6") kind = "device";
-          if (!kind) return;
-
-          const termsList = Array.from(axis.getElementsByTagName("terms"));
-          termsList.forEach((terms) => {
-            const titleNodes = Array.from(terms.getElementsByTagName("title"));
-            const defNode = terms.getElementsByTagName("definition")[0];
-            const explNode = terms.getElementsByTagName("explanation")[0];
-            const includeNodes = Array.from(
-              terms.getElementsByTagName("includes")
-            );
-
-            const lines = [];
-            if (defNode && defNode.textContent.trim()) {
-              lines.push("Definition: " + defNode.textContent.trim());
-            }
-            if (explNode && explNode.textContent.trim()) {
-              lines.push("Explanation: " + explNode.textContent.trim());
-            }
-            if (includeNodes.length) {
-              lines.push("Includes:");
-              includeNodes.forEach((inc) => {
-                const t = inc.textContent.trim();
-                if (t) lines.push(" - " + t);
-              });
-            }
-            let detail = lines.join("\n");
-            if (!detail) {
-              detail = "No additional detail in definitions XML.";
-            }
-
-            titleNodes.forEach((tNode) => {
-              const label = tNode.textContent.trim();
-              if (label && !definitionMaps[kind].has(label)) {
-                definitionMaps[kind].set(label, detail);
-              }
-            });
-          });
-        });
-      });
-    }
-
-    // -------- Index XML 解析 --------
-    function getDirectTitle(parent) {
-      for (const child of Array.from(parent.children)) {
-        if (child.tagName === "title") {
-          return child.textContent.trim();
-        }
-      }
-      return "";
-    }
-
-    function collectCodesFromNode(node) {
-      const set = new Set();
-      ["code", "codes", "tab"].forEach((tag) => {
-        const els = node.getElementsByTagName(tag);
-        Array.from(els).forEach((el) => {
-          const raw = el.textContent.trim();
-          if (!raw) return;
-          raw.split(/[,;\s]+/).forEach((c) => {
-            const t = c.trim().toUpperCase();
-            if (t) set.add(t);
-          });
-        });
-      });
-      return Array.from(set);
-    }
-
-    function traverseIndexNode(node, path, entries) {
-      const isMain = node.tagName === "mainTerm";
-      const isTerm = node.tagName === "term";
-
-      let newPath = path.slice();
-      if (isMain || isTerm) {
-        const t = getDirectTitle(node);
-        if (t) {
-          if (isMain) newPath = [t];
-          else newPath.push(t);
-        }
-      }
-
-      const codes = collectCodesFromNode(node);
-      if (codes.length) {
-        entries.push({
-          path: newPath.join(" > "),
-          codes,
-        });
-      }
-
-      Array.from(node.children).forEach((child) => {
-        if (child.tagName === "term") {
-          traverseIndexNode(child, newPath, entries);
-        }
-      });
-    }
-
-    function parseIndexXml(xmlText) {
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlText, "application/xml");
-      const parserError = xmlDoc.querySelector("parsererror");
-      if (parserError) {
-        throw new Error("Index XML 格式解析失敗，請確認檔案是否正確。");
-      }
-      
-      // 【修正點 1：檢查 XML 根元素是否為 ICD10PCS.index】
-      if (xmlDoc.documentElement.nodeName !== "ICD10PCS.index") {
-          throw new Error("XML 結構錯誤：根元素不是 <ICD10PCS.index>。請確認您上傳的是 Index 檔案。");
-      }
-
-      const letters = Array.from(xmlDoc.getElementsByTagName("letter"));
-      const entries = [];
-
-      letters.forEach((letter) => {
-        const mainTerms = Array.from(letter.getElementsByTagName("mainTerm"));
-        mainTerms.forEach((mt) => {
-          traverseIndexNode(mt, [], entries);
-        });
-      });
-
-      return entries;
-    }
-
-    // -------- 上方完整 7 碼顯示 --------
-    function updateSelectedCode() {
-      if (!currentPrefix) {
-        selectedCodeBox.textContent = "請先輸入前 3 碼並查詢。";
-        return;
-      }
-
-      const { bodypart, approach, device, qualifier } = selections;
-
-      if (!bodypart || !approach || !device || !qualifier) {
-        selectedCodeBox.textContent =
-          "請在下方四個欄位（Body Part、Approach、Device、Qualifier）各選一個選項。";
-        return;
-      }
-
-      const fullCode =
-        currentPrefix + bodypart + approach + device + qualifier;
-
-      if (icdCodeMap.has(fullCode)) {
-        const desc = icdCodeMap.get(fullCode) || "";
-        selectedCodeBox.innerHTML =
-          `目前選取代碼：<code style="font-size:1.1rem;font-weight:700;">${fullCode}</code><br>` +
-          `<span style="font-size:0.83rem;color:#374151;">${desc}</span>`;
-      } else {
-        selectedCodeBox.innerHTML =
-          `組合出的代碼：<code>${fullCode}</code><br>` +
-          `<span style="font-size:0.83rem;color:#b91c1c;">此組合在 2023 PCS Tables 中不存在，請檢查選項。</span>`;
-      }
-    }
-
-    // -------- 自動補齊「最可能組合」 --------
-    function applyMostLikelyCombination() {
-      if (!currentPrefix || !validMap.has(currentPrefix)) return;
-      const vm = validMap.get(currentPrefix);
-      const combos = Array.from(vm.combos);
-
-      const { bodypart, approach, device, qualifier } = selections;
-
-      const candidates = combos.filter(code => {
-        return (!bodypart  || code[3] === bodypart) &&
-               (!approach || code[4] === approach) &&
-               (!device   || code[5] === device) &&
-               (!qualifier|| code[6] === qualifier);
-      });
-
-      if (!candidates.length) return;
-
-      const best = candidates[0];
-      const b4 = best[3];
-      const b5 = best[4];
-      const b6 = best[5];
-      const b7 = best[6];
-
-      if (!bodypart)  selections.bodypart  = b4;
-      if (!approach)  selections.approach  = b5;
-      if (!device)    selections.device    = b6;
-      if (!qualifier) selections.qualifier = b7;
-
-      // 更新 radio 勾選狀態
-      ["bodypart","approach","device","qualifier"].forEach(field => {
-        const v = selections[field];
-        if (!v) return;
-        const input = document.querySelector(`input[name="${field}"][value="${v}"]`);
-        if (input && !input.disabled) {
-          input.checked = true;
-        }
-      });
-    }
-
-    // -------- 將不可能組合反灰 & disabled --------
-    function filterInvalidOptions() {
-      if (!currentPrefix || !validMap.has(currentPrefix)) return;
-      const vm = validMap.get(currentPrefix);
-
-      const bpSel = selections.bodypart;
-      const apSel = selections.approach;
-      const dvSel = selections.device;
-      const qSel  = selections.qualifier;
-
-      function isValidCombination(c4, c5, c6, c7) {
-        const testCode = currentPrefix + c4 + c5 + c6 + c7;
-        return vm.combos.has(testCode);
-      }
-
-      ["bodypart","approach","device","qualifier"].forEach(field => {
-        const radios = document.querySelectorAll(`input[name="${field}"]`);
-        radios.forEach(r => {
-          const val = r.value;
-          let ok = false;
-
-          const bodyCandidates     = (field==="bodypart"  ? [val] : bpSel ? [bpSel] : Array.from(vm.body));
-          const approachCandidates = (field==="approach"  ? [val] : apSel ? [apSel] : Array.from(vm.approach));
-          const deviceCandidates   = (field==="device"    ? [val] : dvSel ? [dvSel] : Array.from(vm.device));
-          const qualCandidates     = (field==="qualifier" ? [val] : qSel  ? [qSel]  : Array.from(vm.qualifier));
-
-          outer:
-          for (let c4 of bodyCandidates) {
-            for (let c5 of approachCandidates) {
-              for (let c6 of deviceCandidates) {
-                for (let c7 of qualCandidates) {
-                  if (isValidCombination(c4, c5, c6, c7)) {
-                    ok = true;
-                    break outer;
-                  }
-                }
-              }
-            }
-          }
-
-          r.disabled = !ok;
-          r.parentElement.style.opacity = ok ? 1 : 0.35;
-          if (!ok && r.checked) {
-            r.checked = false;
-          }
-        });
-      });
-    }
-
-    function applyMostLikelyAndFilter() {
-      applyMostLikelyCombination();
-      filterInvalidOptions();
-      updateSelectedCode();
-    }
-
-    // -------- 渲染四欄表格 --------
-    function renderAxisTable(matched, prefix, totalMatched) {
-      if (!prefix) {
-        resetTablePlaceholder("請在上方輸入前 3 碼。");
-        setResultInfo("請輸入查詢條件。");
-        resetSummaryHeader();
-        resetSelections();
-        return;
-      }
-
-      if (!matched.length) {
-        resetTablePlaceholder("此前 3 碼沒有對應的組合。");
-        setResultInfo(`「${prefix}」查無結果。`);
-        summaryTitle.textContent = prefix;
-        summaryDetail.innerHTML = `
-          <div class="pcs-summary-row"><span><em>Section</em></span><span>—</span></div>
-          <div class="pcs-summary-row"><span><em>Body System</em></span><span>—</span></div>
-          <div class="pcs-summary-row"><span><em>Operation</em></span><span>—</span></div>
-        `;
-        resetSelections();
-        return;
-      }
-
-      const bodyParts = new Map();
-      const approaches = new Map();
-      const devices = new Map();
-      const qualifiers = new Map();
-      let headerInfo = null;
-
-      matched.forEach((item) => {
-        const code = item.code || "";
-        const parts = (item.desc || "").split(" / ");
-
-        if (!headerInfo && parts.length >= 3) {
-          headerInfo = {
-            secCode: code[0],
-            secText: parts[0] || "",
-            bsCode: code[1],
-            bsText: parts[1] || "",
-            opCode: code[2],
-            opText: parts[2] || "",
-          };
-        }
-
-        const c4 = code[3];
-        const c5 = code[4];
-        const c6 = code[5];
-        const c7 = code[6];
-
-        const bpText = parts[3] || "";
-        const apText = parts[4] || "";
-        const dvText = parts[5] || "";
-        const qText = parts[6] || "";
-
-        if (c4 && bpText && !bodyParts.has(c4)) bodyParts.set(c4, bpText);
-        if (c5 && apText && !approaches.has(c5)) approaches.set(c5, apText);
-        if (c6 && dvText && !devices.has(c6)) devices.set(c6, dvText);
-        if (c7 && qText && !qualifiers.has(c7)) qualifiers.set(c7, qText);
-      });
-
-      if (headerInfo) {
-        summaryTitle.textContent = prefix;
-        summaryDetail.innerHTML = `
-          <div class="pcs-summary-row">
-            <span><em>Section</em></span>
-            <span><span class="pcs-summary-code">${headerInfo.secCode}</span>${headerInfo.secText}</span>
-          </div>
-          <div class="pcs-summary-row">
-            <span><em>Body System</em></span>
-            <span><span class="pcs-summary-code">${headerInfo.bsCode}</span>${headerInfo.bsText}</span>
-          </div>
-          <div class="pcs-summary-row">
-            <span><em>Operation</em></span>
-            <span><span class="pcs-summary-code">${headerInfo.opCode}</span>${headerInfo.opText}</span>
-          </div>
-        `;
-      } else {
-        summaryTitle.textContent = prefix;
-      }
-
-      const bpArr = Array.from(bodyParts.entries());
-      const apArr = Array.from(approaches.entries());
-      const dvArr = Array.from(devices.entries());
-      const qArr = Array.from(qualifiers.entries());
-
-      const maxLen = Math.max(
-        bpArr.length,
-        apArr.length,
-        dvArr.length,
-        qArr.length
-      );
-
-      if (maxLen === 0) {
-        resetTablePlaceholder(
-          "此前 3 碼沒有可組合的 Body Part / Approach / Device / Qualifier。"
-        );
-        return;
-      }
-
-      resultBody.innerHTML = "";
-
-      for (let i = 0; i < maxLen; i++) {
-        const [bpCode, bpText] = bpArr[i] || ["", ""];
-        const [apCode, apText] = apArr[i] || ["", ""];
-        const [dvCode, dvText] = dvArr[i] || ["", ""];
-        const [qCode, qText] = qArr[i] || ["", ""];
-
-        const bpTip = getDefinitionTooltip("bodypart", bpText);
-        const dvTip = getDefinitionTooltip("device", dvText);
-
-        const bpTitleAttr =
-          bpCode && bpTip ? ` title="${escapeHtmlAttr(bpTip)}"` : "";
-        const dvTitleAttr =
-          dvCode && dvTip ? ` title="${escapeHtmlAttr(dvTip)}"` : "";
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>
-            ${
-              bpCode
-                ? `<label class="option-row"${bpTitleAttr}>
-                     <input type="radio" name="bodypart" value="${bpCode}">
-                     <span><span class="option-code">${bpCode}</span>${bpText}</span>
-                   </label>`
-                : ""
-            }
-          </td>
-          <td>
-            ${
-              apCode
-                ? `<label class="option-row">
-                     <input type="radio" name="approach" value="${apCode}">
-                     <span><span class="option-code">${apCode}</span>${apText}</span>
-                   </label>`
-                : ""
-            }
-          </td>
-          <td>
-            ${
-              dvCode
-                ? `<label class="option-row"${dvTitleAttr}>
-                     <input type="radio" name="device" value="${dvCode}">
-                     <span><span class="option-code">${dvCode}</span>${dvText}</span>
-                   </label>`
-                : ""
-            }
-          </td>
-          <td>
-            ${
-              qCode
-                ? `<label class="option-row">
-                     <input type="radio" name="qualifier" value="${qCode}">
-                     <span><span class="option-code">${qCode}</span>${qText}</span>
-                   </label>`
-                : ""
-            }
-          </td>
-        `;
-        resultBody.appendChild(tr);
-      }
-
-      setResultInfo(
-        `前 3 碼「${prefix}」共有 ${totalMatched.toLocaleString()} 組 7 碼代碼；下表為其 Body Part / Approach / Device / Qualifier 選項。`
-      );
-
-      resetSelections();        // 清空選擇
-      filterInvalidOptions();   // 但此時皆為合法初始狀態
-    }
-
-    function doSearch() {
-      const q = searchInput.value.trim().toUpperCase();
-
-      if (!isLoaded) {
-        resetTablePlaceholder("請先載入 Tables XML。");
-        setResultInfo("尚未載入 Tables XML，無法查詢。");
-        resetSummaryHeader();
-        resetSelections();
-        return;
-      }
-
-      if (!q || q.length < 3) {
-        resetTablePlaceholder("請輸入完整前 3 碼再進行查詢。");
-        setResultInfo("請輸入 3 碼的查詢條件。");
-        resetSummaryHeader();
-        resetSelections();
-        currentPrefix = "";
-        return;
-      }
-
-      const prefix = q.slice(0, 3);
-      currentPrefix = prefix;
-
-      const matched = icdCodes.filter((item) =>
-        (item.code || "").startsWith(prefix)
-      );
-
-      renderAxisTable(matched, prefix, matched.length);
-    }
-
-    // -------- Index 搜尋顯示 --------
-    function renderIndexResults(list, query) {
-      if (!indexLoaded) {
-        indexResultBox.innerHTML =
-          '<div class="index-result-empty">尚未載入 Index XML，無法使用處置名稱查詢。</div>';
-        return;
-      }
-
-      if (!query) {
-        indexResultBox.innerHTML =
-          '<div class="index-result-empty">請輸入處置名稱或關鍵字（至少 2 個字母）。</div>';
-        return;
-      }
-
-      if (!list.length) {
-        indexResultBox.innerHTML =
-          '<div class="index-result-empty">「' +
-          escapeHtmlAttr(query) +
-          '」查無對應項目。</div>';
-        return;
-      }
-
-      const limited = list.slice(0, 50);
-      const parts = [];
-      limited.forEach((item) => {
-        const codes = item.codes || [];
-        const codeHtml = codes
-          .map(
-            (c) =>
-              `<span class="index-code-chip" data-code="${escapeHtmlAttr(
-                c
-              )}">${escapeHtmlAttr(c)}</span>`
-          )
-          .join("");
-        parts.push(`
-          <div class="index-result-item">
-            <div class="index-path">${escapeHtmlAttr(item.path)}</div>
-            <div class="index-codes">${codeHtml}</div>
-          </div>
-        `);
-      });
-
-      parts.push(
-        `<div class="index-tip">共找到 ${
-          list.length
-        } 筆，僅顯示前 ${limited.length} 筆。點選代碼膠囊可帶入前三碼查詢。</div>`
-      );
-
-      indexResultBox.innerHTML = parts.join("");
-    }
-
-    function searchIndex() {
-      const qRaw = indexSearchInput.value.trim();
-      if (!indexLoaded) {
-        renderIndexResults([], "");
-        return;
-      }
-      if (!qRaw || qRaw.length < 2) {
-        renderIndexResults([], "");
-        return;
-      }
-
-      const q = qRaw.toLowerCase();
-      const matches = indexEntries.filter((e) =>
-        e.path.toLowerCase().includes(q)
-      );
-      renderIndexResults(matches, qRaw);
-    }
-
-    // -------- 檔案載入事件 (已移除檔案選擇器，改為自動載入) --------
+      return;
+  }
+
+  // 1. 執行過濾 (不區分大小寫)
+  const lowerQuery = query.toLowerCase();
+  const filteredEntries = indexEntries.filter((entry) =>
+    entry.path.toLowerCase().includes(lowerQuery)
+  );
+  
+  // 2. 渲染結果
+  if (filteredEntries.length === 0) {
+    indexResultBox.innerHTML = `
+      <div class="index-result-empty">
+        查無符合「${escapeHtmlAttr(query)}」的處置名稱。
+      </div>
+    `;
+    return;
+  }
+
+  let html = "";
+  filteredEntries.slice(0, 50).forEach((entry) => {
+    html += `
+      <div class="index-result-item">
+        <div class="index-path">${entry.path}</div>
+        <div class="index-codes">
+          ${entry.codes
+            .map(
+              (code) =>
+                `<span class="index-code-chip" data-code="${code}">${code.substring(0, 3).toUpperCase()}...</span>`
+            )
+            .join("")}
+        </div>
+      </div>
+    `;
+  });
+  
+  // 顯示結果數量和提示
+  const infoText = filteredEntries.length > 50 ? `(僅顯示前 50 條結果，總計 ${filteredEntries.length} 條)` : '';
+  
+  indexResultBox.innerHTML = html;
+  
+  const tip = document.createElement('div');
+  tip.className = 'index-tip';
+  tip.textContent = `提示: 點擊代碼 (例如：0CT) 可自動帶入前 3 碼進行查詢。 ${infoText}`;
+  indexResultBox.appendChild(tip);
+}
+
+// 監聽表格內的 Radio Button 變動 (第 4-7 碼)
+resultBody.addEventListener("change", (e) => {
+  const target = e.target;
+  if (target.type === "radio") {
+    const name = target.name;
+    selections[name] = target.value;
+    applyMostLikelyAndFilter(); // 這裡會觸發 updateSelectedCode
+  }
+});
+
+// 點 Index 結果代碼 → 帶入前三碼並查詢
+indexResultBox.addEventListener("click", (e) => {
+  const target = e.target.closest(".index-code-chip");
+  if (!target) return;
+  const code = target.dataset.code;
+  if (code) {
+    const prefix = code.substring(0, 3).toUpperCase(); 
+    selectPrefixFromUrl(prefix); // 使用相同的邏輯來處理點擊事件
+  }
+});
+
+// 新增：清除已選擇 Body Part (4-7 碼) 的按鈕監聽
+clearSelectionsBtn.addEventListener("click", () => {
+    if (clearSelectionsBtn.disabled) return;
     
-    // ... (自動載入函數 loadTables(), loadDefinitions(), loadIndex() 保持不變) ...
+    // 1. 重置 Body Part, Approach, Device, Qualifier 的選擇
+    resetSelections(); 
+    
+    // 2. 重新應用最可能組合並過濾非法選項，這會更新表格和代碼顯示
+    applyMostLikelyAndFilter(); 
+});
 
-    // 查詢事件
-    searchInput.addEventListener("input", () => {
-      doSearch();
-    });
-    searchInput.addEventListener("keyup", (e) => {
-      if (e.key === "Enter") {
-        doSearch();
-      }
-    });
 
-    indexSearchInput.addEventListener("input", () => {
-      searchIndex();
-    });
-    indexSearchInput.addEventListener("keyup", (e) => {
-      if (e.key === "Enter") {
-        searchIndex();
-      }
-    });
+// -------- 頁面載入時自動執行 --------
+document.addEventListener("DOMContentLoaded", async () => {
+    // 頁面啟動時顯示載入中
+    updateIntegratedStatus('tables', LOAD_STATUS.LOADING); 
+    updateIntegratedStatus('definitions', LOAD_STATUS.LOADING);
+    updateIntegratedStatus('index', LOAD_STATUS.LOADING);
 
-    // radio 選取：更新 selections + 自動補齊 + 濾掉非法
-    resultBody.addEventListener("change", (e) => {
-      const target = e.target;
-      if (!target || target.type !== "radio") return;
-      const name = target.name;
-      if (name in selections) {
-        selections[name] = target.value;
-        applyMostLikelyAndFilter();
-      }
-    });
-
-    // 點 Index 結果代碼 → 帶入前三碼並查詢
-    indexResultBox.addEventListener("click", (e) => {
-      const t = e.target;
-      if (!t.classList.contains("index-code-chip")) return;
-      const codeRaw = (t.dataset.code || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
-      if (!codeRaw || codeRaw.length < 3) return;
-      const prefix = codeRaw.slice(0, 3);
-      searchInput.value = prefix;
-      doSearch();
-    });
+    // 平行載入所有檔案
+    await Promise.all([
+        loadTables(),
+        loadDefinitions(),
+        loadIndex()
+    ]);
+});
   </script>
 </body>
 </html>

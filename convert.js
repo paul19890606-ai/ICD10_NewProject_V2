@@ -1,4 +1,4 @@
-// convert.js - 最終修正版 Node.js XML 轉換腳本 (V7.6 - 最終結構優化版)
+// convert.js - 最終修正版 Node.js XML 轉換腳本 (V8.1 - 統一 PCS 代碼分離邏輯)
 const fs = require('fs');
 const path = require('path');
 // 需要確保您已安裝 xmldom: npm install xmldom
@@ -111,11 +111,7 @@ function formatDescription(titleNode) {
 
 /**
  * 遞迴解析 ICD-10-CM 索引檔案 (Index/E-Index/Neoplasm/Drug) 中的主詞和子詞。
- * @param {Element} termNode - 當前處理的 <mainTerm> 或 <term> 節點。
- * @param {number} level - 階層深度 (mainTerm = 1, subTerm = 2, 以此類推)。
- * @param {string} parentDescription - 父節點的完整描述。
- * @param {string} source - 數據來源名稱。
- * @param {string} parentCode - 父節點繼承的代碼。
+ * [CM 邏輯 - 未修改]
  */
 function parseTerm(termNode, level, parentDescription, source, parentCode) {
     let titleNode = termNode.getElementsByTagName('title')[0];
@@ -127,7 +123,6 @@ function parseTerm(termNode, level, parentDescription, source, parentCode) {
     // 2. 累加形成完整的描述
     let currentDescription = parentDescription;
     if (termDescription) {
-        // 使用逗號加空格進行累加
         currentDescription += (currentDescription ? ', ' : '') + termDescription;
     }
     
@@ -175,10 +170,7 @@ function parseTerm(termNode, level, parentDescription, source, parentCode) {
 
 /**
  * 處理 ICD-10-CM 索引（Index, E-Index, Neoplasm, Drug）的 XML。
- * **V7.6 關鍵修正點：** 避免在非表格數據中儲存有子詞的 MainTerm，以減少冗餘。
- * @param {string} xmlContent 
- * @param {string} sourceName 
- * @param {boolean} isTable 
+ * [CM 邏輯 - 未修改]
  */
 function processCMIndexData(xmlContent, sourceName, isTable) {
     const parser = new DOMParser();
@@ -263,8 +255,7 @@ function processCMIndexData(xmlContent, sourceName, isTable) {
     console.log('\n'); // 換行，使後續輸出清晰
 }
 
-// *** Tabular 和 PCS 的處理邏輯保持不變，因為它們的結構和需求已經固定。***
-
+// *** Tabular 的處理邏輯保持不變 ***
 /**
  * 遞迴解析 Tabular List 中的代碼。
  */
@@ -357,6 +348,45 @@ function processTabularData(xmlContent) {
 }
 
 
+// --- PCS 專屬新增的輔助函數 ---
+/**
+ * 輔助函數：提取 <see> 或 <use> 節點中的代碼 (<codes> 或 <tab>) 並將其與純文本描述分離。
+ * @param {Element} node - <see> 或 <use> 節點
+ * @returns {{refCode: string, refText: string}} - 分離後的代碼和描述
+ */
+function extractPcsReferenceData(node) {
+    if (!node) return { refCode: '', refText: '' };
+
+    // 為了安全提取純文本，我們克隆這個節點，並在克隆體上移除代碼標籤
+    const clonedNode = node.cloneNode(true);
+    
+    // 1. 查找代碼節點
+    const codesNode = clonedNode.getElementsByTagName('codes')[0];
+    const tabNode = clonedNode.getElementsByTagName('tab')[0];
+    
+    let refCode = '';
+    let codeNodeToRemove = null;
+
+    if (codesNode) {
+        refCode = codesNode.textContent.trim();
+        codeNodeToRemove = codesNode;
+    } else if (tabNode) {
+         refCode = tabNode.textContent.trim();
+         codeNodeToRemove = tabNode;
+    }
+    
+    // 2. 移除代碼節點 (從克隆體移除)，確保 textContent 不會包含它
+    if (codeNodeToRemove && codeNodeToRemove.parentNode) {
+        codeNodeToRemove.parentNode.removeChild(codeNodeToRemove);
+    }
+
+    // 3. 從克隆體中安全地獲取剩餘的純文本
+    let refText = clonedNode.textContent.replace(/\s+/g, ' ').trim();
+    
+    return { refCode, refText };
+}
+
+
 /**
  * 處理 ICD-10-PCS 索引。
  */
@@ -381,24 +411,28 @@ function processPCSIndexData(xmlContent, sourceName) {
 
             const childTerms = getChildElements(mainTermNode).filter(child => child.localName === 'term');
 
-            // 處理 Level 1 的引導詞
+            // 處理 Level 1 的引導詞 (使用 extractPcsReferenceData 確保代碼分離)
             let seeNode = getChildElements(mainTermNode).find(child => child.localName === 'see');
             let useNode = getChildElements(mainTermNode).find(child => child.localName === 'use');
             
-            let seeText = seeNode ? seeNode.textContent.replace(/\s+/g, ' ').trim() : null;
-            let useText = useNode ? useNode.textContent.replace(/\s+/g, ' ').trim() : null;
+            const seeRef = extractPcsReferenceData(seeNode);
+            const useRef = extractPcsReferenceData(useNode);
+            
+            // 檢查是否存在任何參考數據
+            const hasRefData = seeRef.refCode || seeRef.refText || useRef.refCode || useRef.refText;
             
             // 只要有 See 或 Use，就儲存 PCS Level 1 項目
-            if (seeNode || useNode) {
+            if (hasRefData) {
                  const item = {
                     description: mainTermDescription,
-                    code: '', 
+                    // 關鍵修正：從輔助函數中獲取代碼。PCS MainTerm只會有一個代碼/參考。
+                    code: seeRef.refCode || useRef.refCode, 
                     level: 1,
                     index: 'pcs',
                     source: sourceName,
-                    see: seeText,
+                    see: seeRef.refText || null,
                     seeAlso: null,
-                    use: useText,
+                    use: useRef.refText || null,
                     specialCodes: null
                 };
                 pcsIndexData.push(item);
@@ -407,6 +441,7 @@ function processPCSIndexData(xmlContent, sourceName) {
             // 處理所有子詞 (level 2 及以下)
             childTerms.forEach(childTerm => {
                 // 遞迴呼叫從 level 2 開始，父級描述為 MainTermTitle
+                // 關鍵：這裡我們調用修正後的 parseTermPCS
                 parseTermPCS(childTerm, 2, mainTermDescription, sourceName);
             });
         });
@@ -416,6 +451,7 @@ function processPCSIndexData(xmlContent, sourceName) {
 
 /**
  * 遞迴解析 PCS Index 的 <term>。
+ * [V8.1 修正：使用 extractPcsReferenceData 輔助函數]
  */
 function parseTermPCS(termNode, level, parentDescription, source) {
     let titleNode = termNode.getElementsByTagName('title')[0];
@@ -427,37 +463,34 @@ function parseTermPCS(termNode, level, parentDescription, source) {
         currentDescription += (currentDescription ? ', ' : '') + termDescription;
     }
     
-    // 處理 See/Use/Codes
-    let seeNode = getChildElements(termNode).find(child => child.localName === 'see');
-    let useNode = getChildElements(termNode).find(child => child.localName === 'use');
+    // 遍歷當前節點的所有子元素，查找參考標籤和遞歸子項
+    const childElements = getChildElements(termNode);
     
-    let seeText = seeNode ? seeNode.textContent.replace(/\s+/g, ' ').trim() : null;
-    let useText = useNode ? useNode.textContent.replace(/\s+/g, ' ').trim() : null;
-    
-    // 提取 <codes> 內容
-    const codesNode = seeNode ? getChildElements(seeNode).find(child => child.localName === 'codes') : null;
-    const codesText = codesNode ? codesNode.textContent.replace(/\s+/g, ' ').trim() : null;
-    
-    // 處理結果項目
-    if (seeText || useText) {
-        const item = {
-            description: currentDescription,
-            code: codesText || '', 
-            level: level,
-            index: 'pcs',
-            source: source,
-            see: seeText,
-            seeAlso: null,
-            use: useText,
-            specialCodes: null
-        };
-        pcsIndexData.push(item);
-    }
-    
-    // 處理子項 (遞迴)
-    const childTerms = getChildElements(termNode).filter(child => child.localName === 'term');
-    childTerms.forEach(childTerm => {
-        parseTermPCS(childTerm, level + 1, currentDescription, source);
+    // 處理子項和輸出項
+    childElements.forEach(child => {
+        const tagName = child.localName;
+
+        if (tagName === 'term') {
+            // 遞歸處理子級 <term>
+            parseTermPCS(child, level + 1, currentDescription, source);
+        } else if (tagName === 'see' || tagName === 'use') {
+            // 處理輸出項（See 或 Use）
+            
+            const refData = extractPcsReferenceData(child); // <-- 使用統一的輔助函數
+
+            const item = {
+                description: currentDescription, // 這是修正後的階層描述
+                code: refData.refCode, // 這是修正後提取的代碼
+                level: level,
+                index: 'pcs',
+                source: source,
+                see: tagName === 'see' ? refData.refText : null,
+                seeAlso: null, 
+                use: tagName === 'use' ? refData.refText : null,
+                specialCodes: null
+            };
+            pcsIndexData.push(item);
+        }
     });
 }
 

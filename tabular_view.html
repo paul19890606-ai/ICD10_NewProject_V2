@@ -40,6 +40,7 @@
             gap: 8px;
             /* 新增浮動效果 */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
+            margin-bottom: 15px; /* 新增間距，與下方修改框分離 */
         }
         #back-button:hover {
             background-color: #ef4444; /* 深一點的紅色 */
@@ -50,6 +51,56 @@
             transform: translateY(0);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
+
+        /* --- 新增：代碼修改框樣式 --- */
+        .code-changer-box {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 1px solid #d1d5db;
+        }
+
+        .code-changer-box label {
+            font-size: 0.9em;
+            color: #4b5563;
+            font-weight: 600;
+        }
+
+        .code-changer-input-group {
+            display: flex;
+            gap: 5px;
+        }
+        
+        #code-input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            text-transform: uppercase; /* 強制大寫 */
+            width: 80px; /* 讓輸入框適合三碼 */
+            text-align: center;
+        }
+
+        #update-code-button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        #update-code-button:hover {
+            background-color: #2563eb;
+        }
+
 
         /* 移除 .header-area 樣式，因為不再需要 */
         /* h1 的頂部間距也做了調整 */
@@ -240,7 +291,15 @@
             </svg>
             返回搜索結果
         </button>
-    </div>
+
+        <div class="code-changer-box">
+            <label for="code-input">修改 ICD-10-CM 前三碼:</label>
+            <div class="code-changer-input-group">
+                <input type="text" id="code-input" maxlength="3" placeholder="例如: C34">
+                <button id="update-code-button" onclick="updateCodeDisplay()">GO</button>
+            </div>
+        </div>
+        </div>
 
     <div class="container">
         
@@ -252,6 +311,7 @@
 
     <script>
         let tabularData = {};
+        let currentPrefixCode = null; // 新增變量來儲存當前顯示的代碼
 
         // --- 輔助函數：解析並渲染附註 ---
         function renderNotes(category) {
@@ -339,6 +399,7 @@
         // --- 主顯示函數：解析並呈現 Tabular List 細節 ---
         function displayCategoryDetails(prefixCode) {
             const container = document.getElementById('details-container');
+            currentPrefixCode = prefixCode; // 更新當前代碼
             let htmlOutput = '';
 
             // 1. 檢查主分類 (Category) 資訊
@@ -386,7 +447,33 @@
             }
 
             container.innerHTML = htmlOutput;
+            // 更新頁面標題和輸入框預設值
+            document.title = `${prefixCode} - ICD-10-CM Tabular List 詳細檢視`;
+            document.getElementById('page-title').textContent = `${prefixCode} - ICD-10-CM Tabular List 詳細檢視`;
+            const codeInput = document.getElementById('code-input');
+            if (codeInput) {
+                 codeInput.value = prefixCode;
+            }
         }
+        
+        // --- 新增函數：處理代碼更新 ---
+        function updateCodeDisplay() {
+            const newCode = document.getElementById('code-input').value.toUpperCase().trim();
+            const prefixCode = newCode.substring(0, 3);
+
+            if (prefixCode && prefixCode.length === 3) {
+                // 重新載入並顯示新的代碼細節
+                // 註：在實際應用中，您可能還需要更新 URL，但這裡只處理顯示更新
+                displayCategoryDetails(prefixCode);
+
+            } else {
+                alert('請輸入有效的 ICD-10-CM 三碼分類代碼 (例如: C34)');
+            }
+        }
+
+        // 將新函數暴露給全局，以便 HTML 的 onclick 可以調用
+        window.updateCodeDisplay = updateCodeDisplay;
+
 
         // --- 數據載入和初始化 ---
         function loadTabularData() {
@@ -413,9 +500,12 @@
             const prefixCode = codeParam ? codeParam.substring(0, 3).toUpperCase() : null; 
 
             if (prefixCode) {
-                document.title = `${prefixCode} - ICD-10-CM Tabular List 詳細檢視`;
-                document.getElementById('page-title').textContent = `${prefixCode} - ICD-10-CM Tabular List 詳細檢視`;
-                
+                // 初始化時先將輸入框填入當前代碼
+                const codeInput = document.getElementById('code-input');
+                if (codeInput) {
+                     codeInput.value = prefixCode;
+                }
+
                 loadTabularData().then(() => {
                     displayCategoryDetails(prefixCode);
                 });

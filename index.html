@@ -6,7 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
     <style>
         /* ========================================================= */
-        /* CSS 樣式 (V36 - 腫瘤表格優化 - 修正滾動與標頭固定) */
+        /* CSS 樣式 (V38 - 腫瘤表格優化 - 欄寬調整 40% / 10%) */
         /* ========================================================= */
         body { font-family: Arial, sans-serif; padding: 20px; }
         
@@ -155,6 +155,8 @@
             border: 1px solid #ccc; 
             flex-grow: 0; /* 不允許佔滿剩餘空間 */
             flex-shrink: 0; /* 不壓縮 */
+            /* 核心修改：將圓角設定為 100px 達到最大圓角效果 */
+            border-radius: 100px;
         }
         
         .nav-button { 
@@ -276,12 +278,28 @@
             width: 100%;
             min-width: 800px; 
             border-collapse: collapse;
-            table-layout: fixed; /* 確保列寬度一致 */
+            table-layout: fixed; /* 確保列寬度一致 - V37 核心修改 */
             margin-bottom: 0;
             border-top: 2px solid #ccc; /* 保持頂部邊框 */
             border-bottom: none !important;
         }
-
+        
+        /* V38 核心修改 1: 定義每個列的寬度 (第一欄 40%，其餘 10%) */
+        .neoplasm-header-table colgroup col:nth-child(1),
+        .neoplasm-body-table colgroup col:nth-child(1) { width: 40%; } /* Neoplasm/Drug/Substance Term */
+        .neoplasm-header-table colgroup col:nth-child(2),
+        .neoplasm-body-table colgroup col:nth-child(2) { width: 10%; } /* Malignant Primary / Accident */
+        .neoplasm-header-table colgroup col:nth-child(3),
+        .neoplasm-body-table colgroup col:nth-child(3) { width: 10%; } /* Malignant Secondary / Self-Harm */
+        .neoplasm-header-table colgroup col:nth-child(4),
+        .neoplasm-body-table colgroup col:nth-child(4) { width: 10%; } /* Ca in situ / Assault */
+        .neoplasm-header-table colgroup col:nth-child(5),
+        .neoplasm-body-table colgroup col:nth-child(5) { width: 10%; } /* Benign / Undetermined */
+        .neoplasm-header-table colgroup col:nth-child(6),
+        .neoplasm-body-table colgroup col:nth-child(6) { width: 10%; } /* Uncertain Behavior / Adverse Effect */
+        .neoplasm-header-table colgroup col:nth-child(7),
+        .neoplasm-body-table colgroup col:nth-child(7) { width: 10%; } /* Unspecified Behavior / Underdosing */
+        
         /* V35 核心修改 1: 表格標頭置中、加粗、字體放大 */
         .neoplasm-table-header th { 
             padding: 10px 8px; /* 增加垂直內邊距 */
@@ -289,7 +307,7 @@
             border-bottom: 3px solid #b0b0b0; /* 讓分隔線更明顯 */
             text-align: center; /* 核心修改：置中 */
             font-size: 1.05em; /* 核心修改：字體略微放大 */
-            color: #333; /* 字體顏色 */
+            color: #333; /* 預設字體顏色 */
             font-weight: bold; /* 確保加粗 */
         }
 
@@ -307,6 +325,7 @@
             min-width: 800px; /* 保持與表頭表格相同的最小寬度 */
             border-collapse: collapse;
             border-top: none !important; 
+            table-layout: fixed; /* 確保列寬度一致 - V37 核心修改 */
         }
 
         .neoplasm-row, .drug-row { 
@@ -321,11 +340,17 @@
         }
         
         .neoplasm-row:hover, .drug-row:hover { background-color: #e0f0f0; } /* hover 效果調整 */
-        .neoplasm-term-col { width: 30%; padding: 8px; font-weight: bold; color: #333; vertical-align: top; }
+        .neoplasm-term-col { 
+            /* 移除 width: 30% 樣式，交給 colgroup 控制 */
+            padding: 8px; 
+            font-weight: bold; 
+            color: #333; 
+            vertical-align: top; 
+        }
         
         /* V35 核心修改 2: ICD-10-CM 代碼字體放大 */
         .neoplasm-code-col { 
-            width: 10%; 
+            /* 移除 width: 10% 樣式，交給 colgroup 控制 */
             text-align: center; 
             padding: 8px 4px; 
             font-size: 1em; /* 調整為 1em */
@@ -341,6 +366,7 @@
             font-size: 1.15em; /* 核心修改：將代碼的字體放大 */
         }
         
+        /* ICD-10-CM 代碼顏色定義 (與 V34 保持一致) */
         /* 惡性原發 - 深紅 */
         .code-malignant-primary { color: #8B0000 !important; font-weight: 700 !important; } 
         /* 惡性繼發 - 深橙紅 */
@@ -353,6 +379,14 @@
         .code-uncertain { color: #4B0082 !important; font-weight: 700 !important; }
         /* 未特指 - 深灰/黑 */
         .code-unspecified { color: #333333 !important; font-weight: 700 !important; }
+        
+        /* V37 新增：將顏色應用於表頭文字 (與代碼顏色同步) */
+        .neoplasm-header-table th.header-malignant-primary { color: #8B0000 !important; }
+        .neoplasm-header-table th.header-malignant-secondary { color: #CC5500 !important; }
+        .neoplasm-header-table th.header-ca-in-situ { color: #00008B !important; }
+        .neoplasm-header-table th.header-benign { color: #006400 !important; }
+        .neoplasm-header-table th.header-uncertain { color: #4B0082 !important; }
+        .neoplasm-header-table th.header-unspecified { color: #333333 !important; }
         /* ========================================================= */
     </style>
 </head>
@@ -411,7 +445,7 @@
                 
                 <div id="search-controls-row">
                     
-                    <input type="text" id="search-input" placeholder="輸入 CM 或 PCS 關鍵字 (例如：肺炎, 腎臟)" autofocus>
+                    <input type="text" id="search-input" placeholder="輸入 CM 或 PCS 關鍵字 (例如：Lung、FIBROSI LUNG)" autofocus>
                     
                     <div id="result-count-info" style="font-weight: bold; color: #333; white-space: nowrap;"></div> 
                     
@@ -459,6 +493,16 @@
             'col5': 'code-benign', // Benign
             'col6': 'code-uncertain', // UncertainBehavior
             'col7': 'code-unspecified' // UnspecifiedBehavior
+        };
+        
+        // V37 新增：行為類型到表頭 CSS 類別的映射
+        const HEADER_CLASS_MAP = {
+            'MalignantPrimary': 'header-malignant-primary', 
+            'MalignantSecondary': 'header-malignant-secondary', 
+            'CaInSitu': 'header-ca-in-situ', 
+            'Benign': 'header-benign', 
+            'UncertainBehavior': 'header-uncertain', 
+            'UnspecifiedBehavior': 'header-unspecified'
         };
 
 
@@ -577,12 +621,46 @@
             let headerRow = '';
             const isNeoplasmOrDrug = (source === 'Neoplasm' || source === 'Drug');
 
+            // V38 核心修改 2: 更新 colgroup 中的內聯樣式
+            let colgroupHtml = `
+                <colgroup>
+                    <col style="width: 40%;">
+                    <col style="width: 10%;">
+                    <col style="width: 10%;">
+                    <col style="width: 10%;">
+                    <col style="width: 10%;">
+                    <col style="width: 10%;">
+                    <col style="width: 10%;">
+                </colgroup>`;
+            
             if (isNeoplasmOrDrug) {
-                const columns = source === 'Neoplasm' ? Object.values(NEOPLASM_COLUMNS_MAP) : ['Accident', 'Self-Harm', 'Assault', 'Undetermined', 'Adverse Effect', 'Underdosing'];
-                const headers = [source === 'Neoplasm' ? 'Neoplasm' : 'Drug/Substance', ...columns];
+                const columnsMap = source === 'Neoplasm' ? NEOPLASM_COLUMNS_MAP : {
+                    'Accident': 'Accident', 
+                    'SelfHarm': 'Self-Harm', 
+                    'Assault': 'Assault', 
+                    'Undetermined': 'Undetermined', 
+                    'AdverseEffect': 'Adverse Effect', 
+                    'Underdosing': 'Underdosing'
+                };
                 
-                // 準備表頭行 (只有 <tr>)
-                headerRow = `<tr class="neoplasm-table-header">${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+                const headers = [source === 'Neoplasm' ? 'Neoplasm' : 'Drug/Substance', ...Object.values(columnsMap)];
+                
+                // V37 核心修改 1: 準備表頭行 (<th> 內新增顏色類別)
+                const headerKeys = [source === 'Neoplasm' ? 'Term' : 'DrugTerm', ...Object.keys(columnsMap)];
+                
+                headerRow = `<tr class="neoplasm-table-header">`;
+                headerKeys.forEach((key, index) => {
+                    let headerText = headers[index];
+                    let headerClass = '';
+
+                    if (source === 'Neoplasm' && index > 0) {
+                        // key 是 MalignantPrimary, MalignantSecondary, ...
+                        headerClass = HEADER_CLASS_MAP[key] || '';
+                    }
+                    
+                    headerRow += `<th${headerClass ? ` class="${headerClass}"` : ''}>${headerText}</th>`;
+                });
+                headerRow += `</tr>`;
                 
             } else {
                 tableHeader = `<thead>
@@ -591,6 +669,7 @@
                                         <th style="width: 70%;" colspan="6">Code/Reference</th>
                                     </tr>
                                 </thead>`;
+                colgroupHtml = ''; // E-Index 不使用 colgroup
             }
 
 
@@ -618,6 +697,7 @@
                     // 核心修改 2: 組裝新的 HTML 結構，分離表頭和內容
                     listHtml += `<div class="special-table-result">
                                  <table class="neoplasm-header-table">
+                                     ${colgroupHtml} 
                                      <thead>
                                          ${headerRow}
                                      </thead>
@@ -625,6 +705,7 @@
                                  
                                  <div class="table-body-scroll">
                                      <table class="neoplasm-body-table">
+                                         ${colgroupHtml} 
                                          <tbody>
                                              ${bodyContent}
                                          </tbody>
@@ -682,7 +763,7 @@
             });
         }
         
-        // --- V34/V35 核心修改：渲染函數：特殊列表 (多欄位表格 - Neoplasm & Drug) ---
+        // --- V34/V35/V37 核心修改：渲染函數：特殊列表 (多欄位表格 - Neoplasm & Drug) ---
         function renderStandardSpecialTable(item) {
             const rowClass = item.source.includes('Drug') ? 'drug-row' : item.source.includes('Neoplasm') ? 'neoplasm-row' : '';
             const isNeoplasm = item.source.includes('Neoplasm');

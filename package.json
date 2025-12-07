@@ -13,6 +13,7 @@
   "dependencies": {
     "cheerio": "^1.1.2",
     "fast-xml-parser": "^5.3.2",
+    "xml2js": "^0.6.2",
     "xmldom": "^0.6.0"
   },
   "repository": {
