@@ -2516,40 +2516,22 @@
     <axis pos="6">
       <title>Device</title>
       <terms>
-        <title>Articulating Spacer in Lower Joints</title>
+        <title>Articulating Spacer</title>
         <includes>Articulating Spacer (Antibiotic)</includes>
         <includes>Spacer, Articulating (Antibiotic)</includes>
       </terms>
       <terms>
-        <title>Artificial Sphincter in Gastrointestinal System</title>
-        <includes>Artificial anal sphincter (AAS)</includes>
-        <includes>Artificial bowel sphincter (neosphincter)</includes>
-      </terms>
+        <title>Artificial Sphincter</title>
+        <includes>Artificial anal sphincter (AAS) (Gastrointestinal)</includes>
+        <includes>Artificial bowel sphincter (neosphincter) (Gastrointestinal)</includes>
+        <includes>AMS 800(R) Urinary Control System (Urinary)</includes>
+        <includes>Artificial urinary sphincter (AUS) (Urinary)</includes>
+      </terms>      
       <terms>
-        <title>Artificial Sphincter in Urinary System</title>
-        <includes>AMS 800(R) Urinary Control System</includes>
-        <includes>Artificial urinary sphincter (AUS)</includes>
-      </terms>
-      <terms>
-        <title>Autologous Arterial Tissue in Heart and Great Vessels</title>
+        <title>Autologous Arterial Tissue</title>
         <includes>Autologous artery graft</includes>
       </terms>
-      <terms>
-        <title>Autologous Arterial Tissue in Lower Arteries</title>
-        <includes>Autologous artery graft</includes>
-      </terms>
-      <terms>
-        <title>Autologous Arterial Tissue in Lower Veins</title>
-        <includes>Autologous artery graft</includes>
-      </terms>
-      <terms>
-        <title>Autologous Arterial Tissue in Upper Arteries</title>
-        <includes>Autologous artery graft</includes>
-      </terms>
-      <terms>
-        <title>Autologous Arterial Tissue in Upper Veins</title>
-        <includes>Autologous artery graft</includes>
-      </terms>
+      
       <terms>
         <title>Autologous Tissue Substitute</title>
         <includes>Autograft</includes>
@@ -2557,53 +2539,25 @@
         <includes>Epicel(R) cultured epidermal autograft</includes>
       </terms>
       <terms>
-        <title>Autologous Venous Tissue in Heart and Great Vessels</title>
+        <title>Autologous Venous Tissue</title>
         <includes>Autologous vein graft</includes>
       </terms>
       <terms>
-        <title>Autologous Venous Tissue in Lower Arteries</title>
-        <includes>Autologous vein graft</includes>
-      </terms>
-      <terms>
-        <title>Autologous Venous Tissue in Lower Veins</title>
-        <includes>Autologous vein graft</includes>
-      </terms>
-      <terms>
-        <title>Autologous Venous Tissue in Upper Arteries</title>
-        <includes>Autologous vein graft</includes>
-      </terms>
-      <terms>
-        <title>Autologous Venous Tissue in Upper Veins</title>
-        <includes>Autologous vein graft</includes>
-      </terms>
-      <terms>
-        <title>Biologic with Synthetic Substitute, Autoregulated Electrohydraulic for Replacement in Heart and Great Vessels</title>
+        <title>Biologic with Synthetic Substitute, Autoregulated Electrohydraulic</title>
         <includes>Carmat total artificial heart (TAH)</includes>
       </terms>
       <terms>
-        <title>Bone Growth Stimulator in Head and Facial Bones</title>
+        <title>Bone Growth Stimulator</title>
         <includes>Electrical bone growth stimulator (EBGS)</includes>
         <includes>Ultrasonic osteogenic stimulator</includes>
         <includes>Ultrasound bone healing system</includes>
       </terms>
       <terms>
-        <title>Bone Growth Stimulator in Lower Bones</title>
-        <includes>Electrical bone growth stimulator (EBGS)</includes>
-        <includes>Ultrasonic osteogenic stimulator</includes>
-        <includes>Ultrasound bone healing system</includes>
-      </terms>
-      <terms>
-        <title>Bone Growth Stimulator in Upper Bones</title>
-        <includes>Electrical bone growth stimulator (EBGS)</includes>
-        <includes>Ultrasonic osteogenic stimulator</includes>
-        <includes>Ultrasound bone healing system</includes>
-      </terms>
-      <terms>
-        <title>Cardiac Lead in Heart and Great Vessels</title>
+        <title>Cardiac Lead</title>
         <includes>Cardiac contractility modulation lead</includes>
       </terms>
       <terms>
-        <title>Cardiac Lead, Defibrillator for Insertion in Heart and Great Vessels</title>
+        <title>Cardiac Lead, Defibrillator</title>
         <includes>ACUITY(tm) Steerable Lead</includes>
         <includes>Attain Ability(R) lead</includes>
         <includes>Attain StarFix(R) (OTW) lead</includes>
@@ -2613,7 +2567,7 @@
         <includes>ENDOTAK RELIANCE(R) (G) Defibrillation Lead</includes>
       </terms>
       <terms>
-        <title>Cardiac Lead, Pacemaker for Insertion in Heart and Great Vessels</title>
+        <title>Cardiac Lead, Pacemaker</title>
         <includes>ACUITY(tm) Steerable Lead</includes>
         <includes>Attain Ability(R) lead</includes>
         <includes>Attain StarFix(R) (OTW) lead</includes>
@@ -2621,7 +2575,7 @@
         <includes>Corox (OTW) Bipolar Lead</includes>
       </terms>
       <terms>
-        <title>Cardiac Resynchronization Defibrillator Pulse Generator for Insertion in Subcutaneous Tissue and Fascia</title>
+        <title>Cardiac Resynchronization Defibrillator Pulse Generator</title>
         <includes>COGNIS(R) CRT-D</includes>
         <includes>Concerto II CRT-D</includes>
         <includes>Consulta CRT-D</includes>
@@ -2633,25 +2587,25 @@
         <includes>Viva (XT)(S)</includes>
       </terms>
       <terms>
-        <title>Cardiac Resynchronization Pacemaker Pulse Generator for Insertion in Subcutaneous Tissue and Fascia</title>
+        <title>Cardiac Resynchronization Pacemaker Pulse Generator</title>
         <includes>Consulta CRT-P</includes>
         <includes>Stratos LV</includes>
         <includes>Synchra CRT-P</includes>
       </terms>
       <terms>
-        <title>Contraceptive Device in Female Reproductive System</title>
+        <title>Contraceptive Device</title>
         <includes>Intrauterine device (IUD)</includes>
       </terms>
       <terms>
-        <title>Contraceptive Device in Subcutaneous Tissue and Fascia</title>
+        <title>Contraceptive Device</title>
         <includes>Subdermal progesterone implant</includes>
       </terms>
       <terms>
-        <title>Contractility Modulation Device for Insertion in Subcutaneous Tissue and Fascia</title>
+        <title>Contractility Modulation Device</title>
         <includes>Optimizer(tm) III implantable pulse generator</includes>
       </terms>
       <terms>
-        <title>Defibrillator Generator for Insertion in Subcutaneous Tissue and Fascia</title>
+        <title>Defibrillator Generator</title>
         <includes>Evera (XT)(S)(DR/VR)</includes>
         <includes>Implantable cardioverter-defibrillator (ICD)</includes>
         <includes>Maximo II DR (VR)</includes>
@@ -2660,7 +2614,7 @@
         <includes>Virtuoso (II) (DR) (VR)</includes>
       </terms>
       <terms>
-        <title>Diaphragmatic Pacemaker Lead in Respiratory System</title>
+        <title>Diaphragmatic Pacemaker Lead</title>
         <includes>Phrenic nerve stimulator lead</includes>
       </terms>
       <terms>
@@ -2671,86 +2625,24 @@
         <includes>Thoracostomy tube</includes>
       </terms>
       <terms>
-        <title>External Fixation Device in Head and Facial Bones</title>
+        <title>External Fixation Device</title>
         <includes>External fixator</includes>
       </terms>
       <terms>
-        <title>External Fixation Device in Lower Bones</title>
-        <includes>External fixator</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device in Lower Joints</title>
-        <includes>External fixator</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device in Upper Bones</title>
-        <includes>External fixator</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device in Upper Joints</title>
-        <includes>External fixator</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device, Hybrid for Insertion in Lower Bones</title>
+        <title>External Fixation Device, Hybrid</title>
         <includes>Delta frame external fixator</includes>
         <includes>Sheffield hybrid external fixator</includes>
       </terms>
       <terms>
-        <title>External Fixation Device, Hybrid for Insertion in Upper Bones</title>
-        <includes>Delta frame external fixator</includes>
-        <includes>Sheffield hybrid external fixator</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device, Hybrid for Reposition in Lower Bones</title>
-        <includes>Delta frame external fixator</includes>
-        <includes>Sheffield hybrid external fixator</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device, Hybrid for Reposition in Upper Bones</title>
-        <includes>Delta frame external fixator</includes>
-        <includes>Sheffield hybrid external fixator</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device, Limb Lengthening for Insertion in Lower Bones</title>
+        <title>External Fixation Device, Limb Lengthening</title>
         <includes>Ilizarov-Vecklich device</includes>
       </terms>
       <terms>
-        <title>External Fixation Device, Limb Lengthening for Insertion in Upper Bones</title>
-        <includes>Ilizarov-Vecklich device</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device, Monoplanar for Insertion in Lower Bones</title>
+        <title>External Fixation Device, Monoplanar</title>
         <includes>Uniplanar external fixator</includes>
       </terms>
       <terms>
-        <title>External Fixation Device, Monoplanar for Insertion in Upper Bones</title>
-        <includes>Uniplanar external fixator</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device, Monoplanar for Reposition in Lower Bones</title>
-        <includes>Uniplanar external fixator</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device, Monoplanar for Reposition in Upper Bones</title>
-        <includes>Uniplanar external fixator</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device, Ring for Insertion in Lower Bones</title>
-        <includes>Ilizarov external fixator</includes>
-        <includes>Sheffield ring external fixator</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device, Ring for Insertion in Upper Bones</title>
-        <includes>Ilizarov external fixator</includes>
-        <includes>Sheffield ring external fixator</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device, Ring for Reposition in Lower Bones</title>
-        <includes>Ilizarov external fixator</includes>
-        <includes>Sheffield ring external fixator</includes>
-      </terms>
-      <terms>
-        <title>External Fixation Device, Ring for Reposition in Upper Bones</title>
+        <title>External Fixation Device, Ring</title>
         <includes>Ilizarov external fixator</includes>
         <includes>Sheffield ring external fixator</includes>
       </terms>
@@ -2761,32 +2653,29 @@
         <includes>REALIZE(R) Adjustable Gastric Band</includes>
       </terms>
       <terms>
-        <title>Feeding Device in Gastrointestinal System</title>
+        <title>Feeding Device</title>
         <includes>Percutaneous endoscopic gastrojejunostomy (PEG/J) tube</includes>
         <includes>Percutaneous endoscopic gastrostomy (PEG) tube</includes>
       </terms>
       <terms>
-        <title>Hearing Device in Ear, Nose, Sinus</title>
+        <title>Hearing Device</title>
         <includes>Esteem(R) implantable hearing system</includes>
-      </terms>
-      <terms>
-        <title>Hearing Device in Head and Facial Bones</title>
         <includes>Bone anchored hearing device</includes>
       </terms>
       <terms>
-        <title>Hearing Device, Bone Conduction for Insertion in Ear, Nose, Sinus</title>
+        <title>Hearing Device, Bone Conduction</title>
         <includes>Bone anchored hearing device</includes>
       </terms>
       <terms>
-        <title>Hearing Device, Multiple Channel Cochlear Prosthesis for Insertion in Ear, Nose, Sinus</title>
+        <title>Hearing Device, Multiple Channel Cochlear Prosthesis</title>
         <includes>Cochlear implant (CI), multiple channel (electrode)</includes>
       </terms>
       <terms>
-        <title>Hearing Device, Single Channel Cochlear Prosthesis for Insertion in Ear, Nose, Sinus</title>
+        <title>Hearing Device, Single Channel Cochlear Prosthesis</title>
         <includes>Cochlear implant (CI), single channel (electrode)</includes>
       </terms>
       <terms>
-        <title>Implantable Heart Assist System in Heart and Great Vessels</title>
+        <title>Implantable Heart Assist System</title>
         <includes>Berlin Heart Ventricular Assist Device</includes>
         <includes>DeBakey Left Ventricular Assist Device</includes>
         <includes>DuraHeart Left Ventricular Assist System</includes>
@@ -2806,7 +2695,7 @@
         <includes>Tunneled spinal (intrathecal) catheter</includes>
       </terms>
       <terms>
-        <title>Infusion Device, Pump in Subcutaneous Tissue and Fascia</title>
+        <title>Infusion Device, Pump</title>
         <includes>Implantable drug infusion pump (anti-spasmodic)(chemotherapy)(pain)</includes>
         <includes>Injection reservoir, pump</includes>
         <includes>Pump reservoir</includes>
@@ -2814,98 +2703,56 @@
         <includes>SynchroMed pump</includes>
       </terms>
       <terms>
-        <title>Interbody Fusion Device in Lower Joints</title>
-        <includes>Axial Lumbar Interbody Fusion System</includes>
-        <includes>AxiaLIF(R) System</includes>
-        <includes>COALESCE(R) radiolucent interbody fusion device</includes>
-        <includes>COHERE(R) radiolucent interbody fusion device</includes>
-        <includes>CoRoent(R) XL</includes>
-        <includes>Direct Lateral Interbody Fusion (DLIF) device</includes>
-        <includes>EXtreme Lateral Interbody Fusion (XLIF) device</includes>
-        <includes>Interbody fusion (spine) cage</includes>
-        <includes>nanoLOCK(tm) interbody fusion device</includes>
-        <includes>Titan Endoskeleton(tm)</includes>
-        <includes>XLIF(R) System</includes>
+        <title>Interbody Fusion Device</title>
+        <includes>Axial Lumbar Interbody Fusion System (Lower Joints)</includes>
+        <includes>AxiaLIF(R) System (Lower Joints)</includes>
+        <includes>COALESCE(R) radiolucent interbody fusion device (Lower Joints)</includes>
+        <includes>COHERE(R) radiolucent interbody fusion device (Lower Joints)</includes>
+        <includes>CoRoent(R) XL (Lower Joints)</includes>
+        <includes>Direct Lateral Interbody Fusion (DLIF) device (Lower Joints)</includes>
+        <includes>EXtreme Lateral Interbody Fusion (XLIF) device (Lower Joints)</includes>
+        <includes>Interbody fusion (spine) cage (Lower Joints)</includes>
+        <includes>nanoLOCK(tm) interbody fusion device (Lower Joints)</includes>
+        <includes>Titan Endoskeleton(tm) (Lower Joints)</includes>
+        <includes>XLIF(R) System (Lower Joints)</includes>
+        <includes>BAK/C(R) Interbody Cervical Fusion System (Upper Joints)</includes>
+        <includes>COALESCE(R) radiolucent interbody fusion device (Upper Joints)</includes>
+        <includes>COHERE(R) radiolucent interbody fusion device (Upper Joints)</includes>
+        <includes>Interbody fusion (spine) cage (Upper Joints)</includes>
+        <includes>nanoLOCK(tm) interbody fusion device (Upper Joints)</includes>
+        <includes>Titan Endoskeleton(tm) (Upper Joints)</includes>
       </terms>
       <terms>
-        <title>Interbody Fusion Device in Upper Joints</title>
-        <includes>BAK/C(R) Interbody Cervical Fusion System</includes>
-        <includes>COALESCE(R) radiolucent interbody fusion device</includes>
-        <includes>COHERE(R) radiolucent interbody fusion device</includes>
-        <includes>Interbody fusion (spine) cage</includes>
-        <includes>nanoLOCK(tm) interbody fusion device</includes>
-        <includes>Titan Endoskeleton(tm)</includes>
-      </terms>
-      <terms>
-        <title>Internal Fixation Device in Head and Facial Bones</title>
+        <title>Internal Fixation Device</title>
         <includes>Bone screw (interlocking)(lag)(pedicle)(recessed)</includes>
         <includes>Kirschner wire (K-wire)</includes>
         <includes>Neutralization plate</includes>
-      </terms>
-      <terms>
-        <title>Internal Fixation Device in Lower Bones</title>
-        <includes>Bone screw (interlocking)(lag)(pedicle)(recessed)</includes>
         <includes>Clamp and rod internal fixation system (CRIF)</includes>
-        <includes>Kirschner wire (K-wire)</includes>
-        <includes>Neutralization plate</includes>
-      </terms>
-      <terms>
-        <title>Internal Fixation Device in Lower Joints</title>
         <includes>Fusion screw (compression)(lag)(locking)</includes>
         <includes>Joint fixation plate</includes>
-        <includes>Kirschner wire (K-wire)</includes>
       </terms>
+      
       <terms>
-        <title>Internal Fixation Device in Upper Bones</title>
-        <includes>Bone screw (interlocking)(lag)(pedicle)(recessed)</includes>
-        <includes>Clamp and rod internal fixation system (CRIF)</includes>
-        <includes>Kirschner wire (K-wire)</includes>
-        <includes>Neutralization plate</includes>
-      </terms>
-      <terms>
-        <title>Internal Fixation Device in Upper Joints</title>
-        <includes>Fusion screw (compression)(lag)(locking)</includes>
-        <includes>Joint fixation plate</includes>
-        <includes>Kirschner wire (K-wire)</includes>
-      </terms>
-      <terms>
-        <title>Internal Fixation Device, Intramedullary in Lower Bones</title>
+        <title>Internal Fixation Device, Intramedullary</title>
         <includes>Intramedullary (IM) rod (nail)</includes>
         <includes>Intramedullary skeletal kinetic distractor (ISKD)</includes>
         <includes>Kuntscher nail</includes>
       </terms>
       <terms>
-        <title>Internal Fixation Device, Intramedullary in Upper Bones</title>
-        <includes>Intramedullary (IM) rod (nail)</includes>
-        <includes>Intramedullary skeletal kinetic distractor (ISKD)</includes>
-        <includes>Kuntscher nail</includes>
-      </terms>
-      <terms>
-        <title>Internal Fixation Device, Intramedullary Limb Lengthening for Insertion in Lower Bones</title>
+        <title>Internal Fixation Device, Intramedullary Limb Lengthening</title>
         <includes>PRECICE intramedullary limb lengthening system</includes>
       </terms>
       <terms>
-        <title>Internal Fixation Device, Intramedullary Limb Lengthening for Insertion in Upper Bones</title>
-        <includes>PRECICE intramedullary limb lengthening system</includes>
-      </terms>
-      <terms>
-        <title>Internal Fixation Device, Rigid Plate for Insertion in Upper Bones</title>
+        <title>Internal Fixation Device, Rigid Plate</title>
         <includes>Titanium Sternal Fixation System (TSFS)</includes>
       </terms>
+      
       <terms>
-        <title>Internal Fixation Device, Rigid Plate for Reposition in Upper Bones</title>
-        <includes>Titanium Sternal Fixation System (TSFS)</includes>
-      </terms>
-      <terms>
-        <title>Internal Fixation Device, Sustained Compression for Fusion in Lower Joints</title>
+        <title>Internal Fixation Device, Sustained Compression</title>
         <includes>DynaClip(R) (Forte)</includes>
         <includes>DynaNail(R) (Helix)(Hybrid)(Mini)</includes>
       </terms>
-      <terms>
-        <title>Internal Fixation Device, Sustained Compression for Fusion in Upper Joints</title>
-        <includes>DynaClip(R) (Forte)</includes>
-        <includes>DynaNail(R) (Helix)(Hybrid)(Mini)</includes>
-      </terms>
+      
       <terms>
         <title>Intraluminal Device</title>
         <includes>Absolute Pro Vascular (OTW) Self-Expanding Stent System</includes>
@@ -2954,25 +2801,19 @@
         <includes>Zenith(R) Renu(tm) AAA Ancillary Graft</includes>
       </terms>
       <terms>
-        <title>Intraluminal Device, Airway in Ear, Nose, Sinus</title>
-        <includes>Nasopharyngeal airway (NPA)</includes>
-      </terms>
+        <title>Intraluminal Device, Airway</title>
+        <includes>Nasopharyngeal airway (NPA) (Ear/Nose/Sinus)</includes>
+        <includes>Esophageal obturator airway (EOA) (Gastrointestinal)</includes>
+        <includes>Guedel airway (Mouth and Throat)</includes>
+        <includes>Oropharyngeal airway (OPA) (Mouth and Throat)</includes>
+      </terms>      
       <terms>
-        <title>Intraluminal Device, Airway in Gastrointestinal System</title>
-        <includes>Esophageal obturator airway (EOA)</includes>
-      </terms>
-      <terms>
-        <title>Intraluminal Device, Airway in Mouth and Throat</title>
-        <includes>Guedel airway</includes>
-        <includes>Oropharyngeal airway (OPA)</includes>
-      </terms>
-      <terms>
-        <title>Intraluminal Device, Bioactive in Upper Arteries</title>
+        <title>Intraluminal Device, Bioactive</title>
         <includes>Bioactive embolization coil(s)</includes>
         <includes>Micrus CERECYTE microcoil</includes>
       </terms>
       <terms>
-        <title>Intraluminal Device, Branched or Fenestrated, One or Two Arteries for Restriction in Lower Arteries</title>
+        <title>Intraluminal Device, Branched or Fenestrated, One or Two Arteries</title>
         <includes>Cook Zenith(R) Fenestrated AAA Endovascular Graft</includes>
         <includes>EXCLUDER(R) AAA Endoprosthesis</includes>
         <includes>EXCLUDER(R) IBE Endoprosthesis</includes>
@@ -2981,14 +2822,14 @@
         <includes>Zenith(R) Fenestrated AAA Endovascular Graft</includes>
       </terms>
       <terms>
-        <title>Intraluminal Device, Branched or Fenestrated, Three or More Arteries for Restriction in Lower Arteries</title>
+        <title>Intraluminal Device, Branched or Fenestrated, Three or More Arteries</title>
         <includes>Cook Zenith(R) Fenestrated AAA Endovascular Graft</includes>
         <includes>EXCLUDER(R) AAA Endoprosthesis</includes>
         <includes>GORE EXCLUDER(R) AAA Endoprosthesis</includes>
         <includes>Zenith(R) Fenestrated AAA Endovascular Graft</includes>
       </terms>
       <terms>
-        <title>Intraluminal Device, Drug-eluting in Heart and Great Vessels</title>
+        <title>Intraluminal Device, Drug-eluting</title>
         <includes>CYPHER(R) Stent</includes>
         <includes>Endeavor(R) (III)(IV) (Sprint) Zotarolimus-eluting Coronary Stent System</includes>
         <includes>Everolimus-eluting coronary stent</includes>
@@ -2997,38 +2838,30 @@
         <includes>TAXUS(R) Liberte(R) Paclitaxel-eluting Coronary Stent System</includes>
         <includes>XIENCE Everolimus Eluting Coronary Stent System</includes>
         <includes>Zotarolimus-eluting coronary stent</includes>
-      </terms>
-      <terms>
-        <title>Intraluminal Device, Drug-eluting in Lower Arteries</title>
         <includes>Paclitaxel-eluting peripheral stent</includes>
         <includes>Zilver(R) PTX(R) (paclitaxel) Drug-Eluting Peripheral Stent</includes>
-      </terms>
+      </terms>   
       <terms>
-        <title>Intraluminal Device, Drug-eluting in Upper Arteries</title>
-        <includes>Paclitaxel-eluting peripheral stent</includes>
-        <includes>Zilver(R) PTX(R) (paclitaxel) Drug-Eluting Peripheral Stent</includes>
-      </terms>
-      <terms>
-        <title>Intraluminal Device, Endobronchial Valve in Respiratory System</title>
+        <title>Intraluminal Device, Endobronchial Valve</title>
         <includes>Spiration IBV(tm) Valve System</includes>
       </terms>
       <terms>
-        <title>Intraluminal Device, Endotracheal Airway in Respiratory System</title>
+        <title>Intraluminal Device, Endotracheal Airway</title>
         <includes>Endotracheal tube (cuffed)(double-lumen)</includes>
       </terms>
       <terms>
-        <title>Intraluminal Device, Flow Diverter for Restriction in Upper Arteries</title>
+        <title>Intraluminal Device, Flow Diverter</title>
         <includes>Flow Diverter embolization device</includes>
         <includes>Pipeline(tm) (Flex) embolization device</includes>
         <includes>Surpass Streamline(tm) Flow Diverter</includes>
       </terms>
       <terms>
-        <title>Intraluminal Device, Pessary in Female Reproductive System</title>
+        <title>Intraluminal Device, Pessary</title>
         <includes>Pessary ring</includes>
         <includes>Vaginal pessary</includes>
       </terms>
       <terms>
-        <title>Liner in Lower Joints</title>
+        <title>Liner</title>
         <includes>Acetabular cup</includes>
         <includes>Hip (joint) liner</includes>
         <includes>Joint liner (insert)</includes>
@@ -3045,30 +2878,27 @@
         <includes>Reveal (LINQ)(DX)(XT)</includes>
       </terms>
       <terms>
-        <title>Monitoring Device, Hemodynamic for Insertion in Subcutaneous Tissue and Fascia</title>
+        <title>Monitoring Device, Hemodynamic</title>
         <includes>Implantable hemodynamic monitor (IHM)</includes>
         <includes>Implantable hemodynamic monitoring system (IHMS)</includes>
       </terms>
       <terms>
-        <title>Monitoring Device, Pressure Sensor for Insertion in Heart and Great Vessels</title>
+        <title>Monitoring Device, Pressure Sensor</title>
         <includes>CardioMEMS(R) pressure sensor</includes>
         <includes>EndoSure(R) sensor</includes>
       </terms>
       <terms>
-        <title>Neurostimulator Generator in Head and Facial Bones</title>
+        <title>Neurostimulator Generator</title>
         <includes>RNS system neurostimulator generator</includes>
       </terms>
       <terms>
-        <title>Neurostimulator Lead in Central Nervous System and Cranial Nerves</title>
-        <includes>Cortical strip neurostimulator lead</includes>
-        <includes>DBS lead</includes>
-        <includes>Deep brain neurostimulator lead</includes>
-        <includes>RNS System lead</includes>
-        <includes>Spinal cord neurostimulator lead</includes>
-      </terms>
-      <terms>
-        <title>Neurostimulator Lead in Peripheral Nervous System</title>
-        <includes>InterStim(R) Therapy lead</includes>
+        <title>Neurostimulator Lead</title>
+        <includes>Cortical strip neurostimulator lead (Central Nervous)</includes>
+        <includes>DBS lead (Central Nervous)</includes>
+        <includes>Deep brain neurostimulator lead (Central Nervous)</includes>
+        <includes>RNS System lead (Central Nervous)</includes>
+        <includes>Spinal cord neurostimulator lead (Central Nervous)</includes>
+        <includes>InterStim(R) Therapy lead (Peripheral Nervous)</includes>
       </terms>
       <terms>
         <title>Nonautologous Tissue Substitute</title>
@@ -3086,7 +2916,7 @@
         <includes>Alfapump(R) system</includes>
       </terms>
       <terms>
-        <title>Pacemaker, Dual Chamber for Insertion in Subcutaneous Tissue and Fascia</title>
+        <title>Pacemaker, Dual Chamber</title>
         <includes>Advisa (MRI)</includes>
         <includes>EnRhythm</includes>
         <includes>Kappa</includes>
@@ -3095,11 +2925,11 @@
         <includes>Versa</includes>
       </terms>
       <terms>
-        <title>Pacemaker, Single Chamber for Insertion in Subcutaneous Tissue and Fascia</title>
+        <title>Pacemaker, Single Chamber</title>
         <includes>Single lead pacemaker (atrium)(ventricle)</includes>
       </terms>
       <terms>
-        <title>Pacemaker, Single Chamber Rate Responsive for Insertion in Subcutaneous Tissue and Fascia</title>
+        <title>Pacemaker, Single Chamber Rate Responsive</title>
         <includes>Single lead rate responsive pacemaker (atrium)(ventricle)</includes>
       </terms>
       <terms>
@@ -3108,17 +2938,17 @@
         <includes>CivaSheet(R)</includes>
       </terms>
       <terms>
-        <title>Radioactive Element, Cesium-131 Collagen Implant for Insertion in Central Nervous System and Cranial Nerves</title>
+        <title>Radioactive Element, Cesium-131 Collagen</title>
         <includes>Cesium-131 Collagen Implant</includes>
         <includes>GammaTile(tm)</includes>
       </terms>
       <terms>
-        <title>Resurfacing Device in Lower Joints</title>
+        <title>Resurfacing Device</title>
         <includes>CONSERVE(R) PLUS Total Resurfacing Hip System</includes>
         <includes>Cormet Hip Resurfacing System</includes>
       </terms>
       <terms>
-        <title>Short-term External Heart Assist System in Heart and Great Vessels</title>
+        <title>Short-term External Heart Assist System</title>
         <includes>Biventricular external heart assist system</includes>
         <includes>BVS 5000 Ventricular Assist Device</includes>
         <includes>Centrimag(R) Blood Pump</includes>
@@ -3127,47 +2957,31 @@
         <includes>Thoratec Paracorporeal Ventricular Assist Device</includes>
       </terms>
       <terms>
-        <title>Spacer in Lower Joints</title>
-        <includes>Joint spacer (antibiotic)</includes>
+        <title>Spacer</title>
+        <includes>Joint spacer (Antibiotic)</includes>
         <includes>Spacer, Static (Antibiotic)</includes>
         <includes>Static Spacer (Antibiotic)</includes>
       </terms>
+      
       <terms>
-        <title>Spacer in Upper Joints</title>
-        <includes>Joint spacer (antibiotic)</includes>
-      </terms>
-      <terms>
-        <title>Spinal Stabilization Device, Facet Replacement for Insertion in Lower Joints</title>
+        <title>Spinal Stabilization Device, Facet Replacement</title>
         <includes>Facet replacement spinal stabilization device</includes>
       </terms>
+      
       <terms>
-        <title>Spinal Stabilization Device, Facet Replacement for Insertion in Upper Joints</title>
-        <includes>Facet replacement spinal stabilization device</includes>
-      </terms>
-      <terms>
-        <title>Spinal Stabilization Device, Interspinous Process for Insertion in Lower Joints</title>
+        <title>Spinal Stabilization Device, Interspinous Process</title>
         <includes>Interspinous process spinal stabilization device</includes>
         <includes>X-Spine Axle Cage</includes>
         <includes>X-STOP(R) Spacer</includes>
       </terms>
+      
       <terms>
-        <title>Spinal Stabilization Device, Interspinous Process for Insertion in Upper Joints</title>
-        <includes>Interspinous process spinal stabilization device</includes>
-        <includes>X-Spine Axle Cage</includes>
-        <includes>X-STOP(R) Spacer</includes>
-      </terms>
-      <terms>
-        <title>Spinal Stabilization Device, Pedicle-Based for Insertion in Lower Joints</title>
+        <title>Spinal Stabilization Device, Pedicle-Based</title>
         <includes>Dynesys(R) Dynamic Stabilization System</includes>
         <includes>Pedicle-based dynamic stabilization device</includes>
       </terms>
       <terms>
-        <title>Spinal Stabilization Device, Pedicle-Based for Insertion in Upper Joints</title>
-        <includes>Dynesys(R) Dynamic Stabilization System</includes>
-        <includes>Pedicle-based dynamic stabilization device</includes>
-      </terms>
-      <terms>
-        <title>Stimulator Generator in Subcutaneous Tissue and Fascia</title>
+        <title>Stimulator Generator</title>
         <includes>Baroreflex Activation Therapy(R) (BAT(R))</includes>
         <includes>Diaphragmatic pacemaker generator</includes>
         <includes>Mark IV Breathing Pacemaker System</includes>
@@ -3175,7 +2989,7 @@
         <includes>Rheos(R) System device</includes>
       </terms>
       <terms>
-        <title>Stimulator Generator, Multiple Array for Insertion in Subcutaneous Tissue and Fascia</title>
+        <title>Stimulator Generator, Multiple Array</title>
         <includes>Activa PC neurostimulator</includes>
         <includes>Enterra gastric neurostimulator</includes>
         <includes>Neurostimulator generator, multiple channel</includes>
@@ -3183,7 +2997,7 @@
         <includes>PrimeAdvanced neurostimulator (SureScan)(MRI Safe)</includes>
       </terms>
       <terms>
-        <title>Stimulator Generator, Multiple Array Rechargeable for Insertion in Subcutaneous Tissue and Fascia</title>
+        <title>Stimulator Generator, Multiple Array Rechargeable</title>
         <includes>Activa RC neurostimulator</includes>
         <includes>Neurostimulator generator, multiple channel rechargeable</includes>
         <includes>RestoreAdvanced neurostimulator (SureScan)(MRI Safe)</includes>
@@ -3191,42 +3005,33 @@
         <includes>RestoreUltra neurostimulator (SureScan)(MRI Safe)</includes>
       </terms>
       <terms>
-        <title>Stimulator Generator, Single Array for Insertion in Subcutaneous Tissue and Fascia</title>
+        <title>Stimulator Generator, Single Array</title>
         <includes>Activa SC neurostimulator</includes>
         <includes>InterStim(tm) II Therapy neurostimulator</includes>
         <includes>Itrel (3)(4) neurostimulator</includes>
         <includes>Neurostimulator generator, single channel</includes>
       </terms>
       <terms>
-        <title>Stimulator Generator, Single Array Rechargeable for Insertion in Subcutaneous Tissue and Fascia</title>
+        <title>Stimulator Generator, Single Array Rechargeable</title>
         <includes>InterStim(tm) Micro Therapy neurostimulator</includes>
         <includes>Neurostimulator generator, single channel rechargeable</includes>
       </terms>
       <terms>
-        <title>Stimulator Lead in Gastrointestinal System</title>
-        <includes>Gastric electrical stimulation (GES) lead</includes>
-        <includes>Gastric pacemaker lead</includes>
+        <title>Stimulator Lead</title>
+        <includes>Gastric electrical stimulation (GES) lead (Gastrointestinal)</includes>
+        <includes>Gastric pacemaker lead (Gastrointestinal)</includes>
+        <includes>Electrical muscle stimulation (EMS) lead (Muscles)</includes>
+        <includes>Electronic muscle stimulator lead (Muscles)</includes>
+        <includes>Neuromuscular electrical stimulation (NEMS) lead (Muscles)</includes>
+        <includes>Baroreflex Activation Therapy(R) (BAT(R)) (Upper Arteries)</includes>
+        <includes>Carotid (artery) sinus (baroreceptor) lead (Upper Arteries)</includes>
+        <includes>Rheos(R) System lead (Upper Arteries)</includes>
+        <includes>Sacral nerve modulation (SNM) lead (Urinary)</includes>
+        <includes>Sacral neuromodulation lead (Urinary)</includes>
+        <includes>Urinary incontinence stimulator lead (Urinary)</includes>
       </terms>
       <terms>
-        <title>Stimulator Lead in Muscles</title>
-        <includes>Electrical muscle stimulation (EMS) lead</includes>
-        <includes>Electronic muscle stimulator lead</includes>
-        <includes>Neuromuscular electrical stimulation (NEMS) lead</includes>
-      </terms>
-      <terms>
-        <title>Stimulator Lead in Upper Arteries</title>
-        <includes>Baroreflex Activation Therapy(R) (BAT(R))</includes>
-        <includes>Carotid (artery) sinus (baroreceptor) lead</includes>
-        <includes>Rheos(R) System lead</includes>
-      </terms>
-      <terms>
-        <title>Stimulator Lead in Urinary System</title>
-        <includes>Sacral nerve modulation (SNM) lead</includes>
-        <includes>Sacral neuromodulation lead</includes>
-        <includes>Urinary incontinence stimulator lead</includes>
-      </terms>
-      <terms>
-        <title>Subcutaneous Defibrillator Lead in Subcutaneous Tissue and Fascia</title>
+        <title>Subcutaneous Defibrillator Lead</title>
         <includes>S-ICD(tm) lead</includes>
       </terms>
       <terms>
@@ -3272,65 +3077,61 @@
         <includes>Zimmer(R) NexGen(R) LPS-Flex Mobile Knee</includes>
       </terms>
       <terms>
-        <title>Synthetic Substitute, Ceramic for Replacement in Lower Joints</title>
+        <title>Synthetic Substitute, Ceramic</title>
         <includes>Ceramic on ceramic bearing surface</includes>
         <includes>Novation(R) Ceramic AHS(R) (Articulation Hip System)</includes>
       </terms>
       <terms>
-        <title>Synthetic Substitute, Intraocular Telescope for Replacement in Eye</title>
+        <title>Synthetic Substitute, Intraocular Telescope</title>
         <includes>Implantable Miniature Telescope(tm) (IMT)</includes>
       </terms>
       <terms>
-        <title>Synthetic Substitute, Metal for Replacement in Lower Joints</title>
+        <title>Synthetic Substitute, Metal</title>
         <includes>Cobalt/chromium head and socket</includes>
         <includes>Metal on metal bearing surface</includes>
       </terms>
       <terms>
-        <title>Synthetic Substitute, Metal on Polyethylene for Replacement in Lower Joints</title>
+        <title>Synthetic Substitute, Metal on Polyethylene</title>
         <includes>Cobalt/chromium head and polyethylene socket</includes>
       </terms>
       <terms>
-        <title>Synthetic Substitute, Oxidized Zirconium on Polyethylene for Replacement in Lower Joints</title>
+        <title>Synthetic Substitute, Oxidized Zirconium on Polyethylene</title>
         <includes>OXINIUM</includes>
       </terms>
       <terms>
-        <title>Synthetic Substitute, Pneumatic for Replacement in Heart and Great Vessels</title>
+        <title>Synthetic Substitute, Pneumatic</title>
         <includes>SynCardia (temporary) total artificial heart (TAH)</includes>
       </terms>
       <terms>
-        <title>Synthetic Substitute, Polyethylene for Replacement in Lower Joints</title>
+        <title>Synthetic Substitute, Polyethylene</title>
         <includes>Polyethylene socket</includes>
       </terms>
       <terms>
-        <title>Synthetic Substitute, Reverse Ball and Socket for Replacement in Upper Joints</title>
+        <title>Synthetic Substitute, Reverse Ball and Socket</title>
         <includes>Delta III Reverse shoulder prosthesis</includes>
         <includes>Reverse(R) Shoulder Prosthesis</includes>
       </terms>
       <terms>
-        <title>Tissue Expander in Skin and Breast</title>
+        <title>Tissue Expander</title>
         <includes>Tissue expander (inflatable)(injectable)</includes>
       </terms>
       <terms>
-        <title>Tissue Expander in Subcutaneous Tissue and Fascia</title>
-        <includes>Tissue expander (inflatable)(injectable)</includes>
-      </terms>
-      <terms>
-        <title>Tracheostomy Device in Respiratory System</title>
+        <title>Tracheostomy Device</title>
         <includes>Tracheostomy tube</includes>
       </terms>
       <terms>
-        <title>Vascular Access Device, Totally Implantable in Subcutaneous Tissue and Fascia</title>
+        <title>Vascular Access Device, Totally Implantable</title>
         <includes>Implanted (venous)(access) port</includes>
         <includes>Injection reservoir, port</includes>
         <includes>Subcutaneous injection reservoir, port</includes>
       </terms>
       <terms>
-        <title>Vascular Access Device, Tunneled in Subcutaneous Tissue and Fascia</title>
+        <title>Vascular Access Device, Tunneled</title>
         <includes>Tunneled central venous catheter</includes>
         <includes>Vectra(R) Vascular Access Graft</includes>
       </terms>
       <terms>
-        <title>Zooplastic Tissue in Heart and Great Vessels</title>
+        <title>Zooplastic Tissue</title>
         <includes>3f (Aortic) Bioprosthesis valve</includes>
         <includes>Bovine pericardial valve</includes>
         <includes>Bovine pericardium graft</includes>
